@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Blue Bear Detail — professional mobile auto detailing serving Denver and surrounding areas.">
+  <title>Blue Bear Detail | Mobile Detailing Denver</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="index.html"><img class="logo__img" src="logos/BBD-Site-Logo-horizontal.png" alt="Blue Bear Detail" width="220" height="48" loading="eager" decoding="async"></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-panel" aria-label="Main">
+      <a href="services.html">Services</a>
+      <a href="book.html">Book</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <div class="account-menu" data-account-menu>
+        <button type="button" class="account-menu__trigger" id="account-menu-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="account-menu-dropdown" aria-label="Account menu">
+          <i class="fa-solid fa-circle-user account-menu__lucide" aria-hidden="true"></i>
+        </button>
+        <div class="account-menu__dropdown" id="account-menu-dropdown" hidden role="menu">
+          <a href="account.html" class="account-menu__item" role="menuitem">Dashboard</a>
+          <a href="login.html" class="account-menu__item account-menu__item--login" role="menuitem">Log in</a>
+          <a href="signup.html" class="account-menu__item account-menu__item--signup" role="menuitem">Create account</a>
+          <button type="button" class="account-menu__item account-menu__item--logout" role="menuitem" hidden>Log out</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero hero--splash">
+      <div class="hero__media" aria-hidden="true">
+        <div class="hero__slides">
+          <img
+            class="hero__slide is-active"
+            src="https://images.unsplash.com/photo-1721264532439-a4f1bb8448f1?auto=format&amp;fit=crop&amp;w=1920&amp;q=85"
+            alt=""
+            width="1920"
+            height="1080"
+            fetchpriority="high"
+            decoding="async"
+            crossorigin="anonymous">
+          <img class="hero__slide" alt="" width="1920" height="1080" decoding="async" crossorigin="anonymous">
+        </div>
+      </div>
+      <div class="hero__carousel-hits" role="group" aria-label="Featured images">
+        <button type="button" class="hero__carousel-hit hero__carousel-hit--prev" aria-label="Previous image" tabindex="-1"></button>
+        <button type="button" class="hero__carousel-hit hero__carousel-hit--next" aria-label="Next image" tabindex="-1"></button>
+      </div>
+      <div class="hero__content">
+        <div class="hero__card">
+          <img class="hero__brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="Blue Bear Detail" width="160" height="160" loading="eager" decoding="async">
+          <h1 data-bbd="index.heroH1">Care for every vehicle, inside and out</h1>
+          <p class="hero__desc" data-bbd="index.heroDesc">Cars, trucks, SUVs, and more — washes, interiors, paint protection, and fleet-friendly scheduling. We bring pro gear and sharp attention to your driveway or office.</p>
+          <p class="hero__eyebrow" data-bbd="index.heroEyebrow">Denver mobile detailing</p>
+          <div class="hero__actions">
+            <a class="btn btn-primary" href="book.html">Book Today</a>
+            <a class="btn btn-outline hero__btn-call" href="tel:+17206012503">Call Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--brand-full">
+      <div class="section--brand-full__inner">
+        <h2 class="section-title section-title--on-dark" data-bbd="index.whatWeOfferTitle">What We Offer</h2>
+        <div class="services-card services-card--brand">
+          <div class="services-card__media">
+            <img
+              src="https://images.unsplash.com/photo-1608506375591-b90e1f955e4b?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+              alt="Black car with a cup on the roof — professional detailing"
+              width="900"
+              height="600"
+              loading="lazy"
+              decoding="async">
+          </div>
+          <div class="services-card__body">
+            <h3 class="services-card__headline" data-bbd="index.offerHeading">Mobile Detailing Packages</h3>
+            <p data-bbd="index.offerCopy">From express washes to full interior and exterior packages, we bring showroom results to your driveway or office.</p>
+            <a class="button button--cta-lg" href="services.html">View services</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="map-section" aria-labelledby="map-heading">
+      <div class="map-section-inner">
+        <h2 id="map-heading" data-bbd="index.mapH2">Serving Denver and surrounding areas</h2>
+        <p class="sub" data-bbd="index.mapSub">Approximate 50-mile service radius from Denver — contact us to confirm availability for your location.</p>
+        <div id="service-map" class="map-wrap" role="img" aria-label="Map showing Denver and a 50 mile service radius"></div>
+        <p class="map-legend">Shaded circle shows an approximate 50-mile radius from Denver; boundaries may vary by appointment type. <a href="https://www.google.com/maps/search/?api=1&amp;query=Denver%2C+CO" target="_blank" rel="noopener noreferrer">Open in Google Maps</a></p>
+      </div>
+    </section>
+  </main>
+
+  <section class="call-strip" aria-label="Call">
+    <div class="call-strip__inner">
+      <span class="call-strip__label">Call</span>
+      <a class="call-strip__phone" href="tel:+17206012503">720&nbsp;601&nbsp;2503</a>
+    </div>
+  </section>
+
+  <div class="footer-payments-bar" aria-label="Accepted payments">
+    <div class="footer-payments-bar__inner">
+      <div class="footer__payment">
+        <ul class="list-payment" role="list">
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/visa.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Visa</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/mastercard.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Mastercard</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/americanexpress.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">American Express</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/discover.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Discover</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/jcb.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">JCB</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/dinersclub.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Diners Club</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/applepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Apple Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/googlepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Google Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/link.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Link by Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/stripe.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/square.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Square</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-nav__col">
+          <a href="index.html">Home <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="services.html">Services <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="gallery.html">Gallery <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+        <div class="footer-nav__col">
+          <a href="about.html">About <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="contact.html">Contact <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="subscriptions.html">Subscriptions <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+      </nav>
+      <div class="footer-col footer-col--phone">
+        <p class="footer-call-label">Call</p>
+        <a class="footer-phone" href="tel:+17206012503">720&nbsp;601&nbsp;2503</a>
+      </div>
+      <div class="footer-col footer-col--legal-social">
+        <div class="footer-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+        <div class="social-row" aria-label="Social media">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script type="module" src="js/auth-dropdown.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/hero-carousel.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/map.js"></script>
+</body>
+</html>

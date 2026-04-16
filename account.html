@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Your Blue Bear Detail account — credits, bookings, and profile (preview).">
+  <title>Account | Blue Bear Detail</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="page-account">
+  <header class="site-header">
+    <a class="logo" href="index.html"><img class="logo__img" src="logos/BBD-Site-Logo-horizontal.png" alt="Blue Bear Detail" width="220" height="48" loading="eager" decoding="async"></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-panel" aria-label="Main">
+      <a href="services.html">Services</a>
+      <a href="book.html">Book</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <div class="account-menu" data-account-menu>
+        <button type="button" class="account-menu__trigger" id="account-menu-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="account-menu-dropdown" aria-label="Account menu">
+          <i class="fa-solid fa-circle-user account-menu__lucide" aria-hidden="true"></i>
+        </button>
+        <div class="account-menu__dropdown" id="account-menu-dropdown" hidden role="menu">
+          <a href="account.html" class="account-menu__item" role="menuitem" aria-current="page">Dashboard</a>
+          <a href="settings.html" class="account-menu__item account-menu__item--settings" role="menuitem" hidden>Settings</a>
+          <a href="login.html" class="account-menu__item account-menu__item--login" role="menuitem">Log in</a>
+          <a href="signup.html" class="account-menu__item account-menu__item--signup" role="menuitem">Create account</a>
+          <button type="button" class="account-menu__item account-menu__item--logout" role="menuitem" hidden>Log out</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-dark page-account">
+    <div class="page-hero page-hero--dark page-hero--account">
+      <h1 data-bbd="account.heroH1">Account</h1>
+      <p class="account-hero-greeting" id="acct-greeting">Welcome back.</p>
+      <p class="account-hero-description">Your account dashboards with credits, activity and upcoming service information.</p>
+    </div>
+
+    <div class="content-block content-block--dark account-page">
+      <nav class="account-nav" aria-label="Account sections">
+        <ul class="account-nav__list">
+          <li><a href="#account-dashboard">Dashboard</a></li>
+          <li><a href="settings.html">Settings</a></li>
+        </ul>
+      </nav>
+
+      <section class="account-section" id="account-dashboard" aria-labelledby="dash-heading">
+        <h2 class="account-section__title" id="dash-heading">Dashboard</h2>
+        <div class="account-dashboard-grid account-dashboard-grid--stats">
+          <div class="account-stat-card">
+            <p class="account-stat-card__label">Wash credit balance</p>
+            <p class="account-stat-card__value" id="acct-credit-balance">$0.00</p>
+            <p class="account-stat-card__meta" id="acct-credit-meta">No credit details yet.</p>
+          </div>
+          <div class="account-stat-card">
+            <p class="account-stat-card__label">Wash Pass X<sup>&reg;</sup></p>
+            <p class="account-stat-card__value" id="acct-pass-tier">—</p>
+            <p class="account-stat-card__meta" id="acct-pass-meta">No pass details yet.</p>
+          </div>
+          <div class="account-stat-card">
+            <p class="account-stat-card__label">Reward points</p>
+            <p class="account-stat-card__value" id="acct-reward-points">0</p>
+            <p class="account-stat-card__meta" id="acct-points-meta">No reward points earned yet.</p>
+          </div>
+          <div class="account-stat-card account-stat-card--wide">
+            <p class="account-stat-card__label">Last service</p>
+            <p class="account-stat-card__value account-stat-card__value--lg" id="acct-last-service-title">No completed service yet</p>
+            <p class="account-stat-card__meta" id="acct-last-service-meta">When your first appointment is completed, it will appear here.</p>
+          </div>
+          <div class="account-stat-card">
+            <p class="account-stat-card__label">Next appointment</p>
+            <p class="account-stat-card__value account-stat-card__value--md" id="acct-next-appointment-label">—</p>
+            <p class="account-stat-card__meta" id="acct-next-appointment-meta">No upcoming appointment on file.</p>
+            <p class="account-stat-card__actions">
+              <a class="btn btn-outline account-card-btn" href="book-flow.html">Schedule</a>
+            </p>
+          </div>
+          <div class="account-stat-card">
+            <p class="account-stat-card__label">Vehicles on file</p>
+            <p class="account-stat-card__value" id="acct-vehicle-count">0</p>
+            <p class="account-stat-card__meta" id="acct-vehicle-list">No vehicles added yet.</p>
+            <p class="account-stat-card__actions">
+              <button type="button" class="btn btn-outline account-card-btn" id="acct-view-vehicles-btn">View Vehicles</button>
+              <button type="button" class="btn btn-outline account-card-btn" id="acct-add-vehicle-btn" hidden>Add Vehicle</button>
+            </p>
+          </div>
+        </div>
+
+        <h3 class="account-section__subtitle">Recent activity</h3>
+        <div class="account-stat-card">
+          <ul class="account-activity-list" id="acct-activity-list">
+            <li><span><strong>No activity yet</strong> — Once your account starts booking, items show here.</span><span>—</span></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <dialog id="acct-vehicles-dialog" class="package-info-dialog" aria-labelledby="acct-vehicles-title">
+    <div class="package-info-dialog__panel">
+      <div class="package-info-dialog__header">
+        <h2 id="acct-vehicles-title" class="package-info-dialog__title">Your Vehicles</h2>
+        <button type="button" class="package-info-dialog__close" id="acct-vehicles-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="package-info-dialog__body">
+        <form class="account-vehicles-form" id="acct-vehicle-add-form" action="#" method="post" novalidate>
+          <div class="account-vehicles-form__grid">
+            <div class="form-row">
+              <label for="acct-vehicle-year">Year (optional)</label>
+              <select id="acct-vehicle-year">
+                <option value="">Select year</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="acct-vehicle-make">Make</label>
+              <select id="acct-vehicle-make" required>
+                <option value="">Select make</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="acct-vehicle-model">Model</label>
+              <select id="acct-vehicle-model" required>
+                <option value="">Select model</option>
+              </select>
+            </div>
+          </div>
+          <div class="account-vehicles-form__actions">
+            <button type="submit" class="btn btn-outline account-card-btn">Add Vehicle</button>
+          </div>
+        </form>
+        <ul class="account-vehicles-modal-list" id="acct-vehicles-list">
+          <li>No vehicles on file yet.</li>
+        </ul>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="footer-payments-bar" aria-label="Accepted payments">
+    <div class="footer-payments-bar__inner">
+      <div class="footer__payment">
+        <ul class="list-payment" role="list">
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/visa.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Visa</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/mastercard.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Mastercard</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/americanexpress.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">American Express</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/discover.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Discover</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/jcb.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">JCB</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/dinersclub.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Diners Club</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/applepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Apple Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/googlepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Google Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/link.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Link by Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/stripe.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/square.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Square</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-nav__col">
+          <a href="index.html">Home <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="services.html">Services <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="gallery.html">Gallery <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+        <div class="footer-nav__col">
+          <a href="about.html">About <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="contact.html">Contact <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="subscriptions.html">Subscriptions <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="account.html" aria-current="page">Dashboard <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+      </nav>
+      <div class="footer-col footer-col--phone">
+        <p class="footer-call-label">Call</p>
+        <a class="footer-phone" href="tel:+17206012503">720&nbsp;601&nbsp;2503</a>
+      </div>
+      <div class="footer-col footer-col--legal-social">
+        <div class="footer-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+        <div class="social-row" aria-label="Social media">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script src="js/booking-vehicle-data.js"></script>
+  <script type="module" src="js/account-bootstrap.js"></script>
+  <script type="module" src="js/account-data.js"></script>
+  <script type="module" src="js/account-onboarding.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script src="js/toast.js"></script>
+</body>
+</html>

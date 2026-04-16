@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Manage your Blue Bear Detail account settings, profile photo, and security.">
+  <title>Settings | Blue Bear Detail</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="page-account">
+  <header class="site-header">
+    <a class="logo" href="index.html"><img class="logo__img" src="logos/BBD-Site-Logo-horizontal.png" alt="Blue Bear Detail" width="220" height="48" loading="eager" decoding="async"></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-panel" aria-label="Main">
+      <a href="services.html">Services</a>
+      <a href="book.html">Book</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <div class="account-menu" data-account-menu>
+        <button type="button" class="account-menu__trigger" id="account-menu-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="account-menu-dropdown" aria-label="Account menu">
+          <i class="fa-solid fa-circle-user account-menu__lucide" aria-hidden="true"></i>
+        </button>
+        <div class="account-menu__dropdown" id="account-menu-dropdown" hidden role="menu">
+          <a href="account.html" class="account-menu__item" role="menuitem">Dashboard</a>
+          <a href="settings.html" class="account-menu__item account-menu__item--settings" role="menuitem" aria-current="page" hidden>Settings</a>
+          <a href="login.html" class="account-menu__item account-menu__item--login" role="menuitem">Log in</a>
+          <a href="signup.html" class="account-menu__item account-menu__item--signup" role="menuitem">Create account</a>
+          <button type="button" class="account-menu__item account-menu__item--logout" role="menuitem" hidden>Log out</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-dark page-account">
+    <div class="page-hero page-hero--dark page-hero--account">
+      <h1>Settings</h1>
+      <p>Manage your profile photo, contact info, and password settings.</p>
+    </div>
+
+    <div class="content-block content-block--dark account-page">
+      <nav class="account-nav" aria-label="Account sections">
+        <ul class="account-nav__list">
+          <li><a href="account.html">Dashboard</a></li>
+          <li><a href="#account-profile-photo">Profile photo</a></li>
+          <li><a href="#account-profile">Profile &amp; security</a></li>
+        </ul>
+      </nav>
+
+      <section class="account-section" id="account-profile" aria-labelledby="profile-heading">
+        <h2 class="account-section__title" id="profile-heading">Profile &amp; security</h2>
+
+        <div class="account-card account-card--profile-photo" id="account-profile-photo" aria-labelledby="account-profile-photo-heading">
+          <h3 id="account-profile-photo-heading" class="account-card__title">Profile photo</h3>
+          <p class="account-card__lede">Shown in the header when you’re signed in. Stored in this browser only until you connect cloud storage.</p>
+          <div class="admin-profile-photo admin-profile-photo--account" data-bbd-account-avatar data-bbd-avatar-theme="account">
+            <div class="admin-profile-photo__preview-wrap">
+              <img data-bbd-avatar-preview class="admin-profile-photo__preview" alt="" width="120" height="120" hidden decoding="async">
+              <div data-bbd-avatar-placeholder class="admin-profile-photo__placeholder" aria-hidden="true">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </div>
+            <div class="admin-profile-photo__col">
+              <div class="admin-profile-photo__actions">
+                <label for="bbd-avatar-file-account" class="btn btn-outline">Choose image</label>
+                <input id="bbd-avatar-file-account" data-bbd-avatar-file class="admin-profile-photo__file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+                <button data-bbd-avatar-save type="button" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>Save</button>
+                <button data-bbd-avatar-remove type="button" class="btn btn-outline">Remove</button>
+              </div>
+              <p class="admin-profile-photo__hint">After choosing a file, drag and zoom to fit the circle, then use this photo and Save.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="account-profile-forms">
+          <div class="account-card account-card--contact" id="account-contact-card">
+            <div class="account-card__head-row">
+              <h3 class="account-card__title account-card__title--left">Contact &amp; service address</h3>
+              <button type="button" class="btn btn-outline account-contact-edit-btn" id="account-profile-edit-btn" aria-expanded="false" aria-controls="account-profile-form">
+                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit
+              </button>
+            </div>
+            <p class="account-card__lede account-card__lede--tight">Name, email, phone, and where we meet your vehicle. Stored in this browser until you connect your backend.</p>
+
+            <div class="account-profile-view" id="account-profile-view">
+              <dl class="account-profile-dl">
+                <div class="account-profile-dl__row">
+                  <dt>First name</dt>
+                  <dd data-profile-field="firstName">—</dd>
+                </div>
+                <div class="account-profile-dl__row">
+                  <dt>Last name</dt>
+                  <dd data-profile-field="lastName">—</dd>
+                </div>
+                <div class="account-profile-dl__row">
+                  <dt>Email</dt>
+                  <dd data-profile-field="email">—</dd>
+                </div>
+                <div class="account-profile-dl__row">
+                  <dt>Phone</dt>
+                  <dd data-profile-field="phone">—</dd>
+                </div>
+                <div class="account-profile-dl__row">
+                  <dt>Default service address</dt>
+                  <dd data-profile-field="address">—</dd>
+                </div>
+              </dl>
+            </div>
+
+            <form class="account-form account-form--profile-edit" id="account-profile-form" action="#" method="post" autocomplete="off" hidden>
+              <div class="form-row">
+                <label for="acct-first">First name</label>
+                <input id="acct-first" name="profileFirstName" type="text" autocomplete="off" placeholder="First name">
+              </div>
+              <div class="form-row">
+                <label for="acct-last">Last name</label>
+                <input id="acct-last" name="profileLastName" type="text" autocomplete="off" placeholder="Last name">
+              </div>
+              <div class="form-row">
+                <label for="acct-email">Email</label>
+                <input id="acct-email" name="profileEmail" type="email" autocomplete="off" placeholder="you@example.com" inputmode="email">
+              </div>
+              <div class="form-row form-row--email-confirm" id="acct-email-confirm-row" hidden>
+                <label for="acct-email-confirm">Confirm new email</label>
+                <input id="acct-email-confirm" type="email" autocomplete="off" placeholder="Re-enter new email" inputmode="email">
+                <div class="form-row--email-confirm__actions">
+                  <button type="button" class="btn btn-outline" id="acct-email-confirm-btn">Confirm email</button>
+                </div>
+                <p class="account-form-hint">Shown when you change email — enter it again and tap Confirm email before saving.</p>
+              </div>
+              <div class="form-row">
+                <label for="acct-phone">Phone</label>
+                <input id="acct-phone" name="profilePhone" type="tel" autocomplete="off" placeholder="(555) 555-0100">
+              </div>
+              <div class="form-row">
+                <label for="acct-address">Default service address</label>
+                <input id="acct-address" name="profileAddress" type="text" autocomplete="off" placeholder="Street, city, state">
+              </div>
+              <div class="account-form-actions">
+                <button type="button" class="btn btn-outline" id="account-profile-cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save profile</button>
+              </div>
+            </form>
+          </div>
+
+          <hr class="account-divider">
+
+          <form class="account-form" id="account-password-form" action="#" method="post" autocomplete="off">
+            <h3 class="account-section__subtitle account-section__subtitle--flush-top">Password</h3>
+            <div class="form-row">
+              <label for="acct-pass-current">Current password</label>
+              <input id="acct-pass-current" name="currentPassword" type="password" autocomplete="current-password" placeholder="••••••••">
+            </div>
+            <div class="form-row">
+              <label for="acct-pass-new">New password</label>
+              <input id="acct-pass-new" name="newPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters">
+            </div>
+            <div class="form-row">
+              <label for="acct-pass-confirm">Confirm new password</label>
+              <input id="acct-pass-confirm" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Repeat new password">
+            </div>
+            <p class="account-form-hint">In production, never log passwords on the client — delegate to your identity service.</p>
+            <div class="account-form-actions">
+              <button type="submit" class="btn btn-outline">Update password</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="footer-payments-bar" aria-label="Accepted payments">
+    <div class="footer-payments-bar__inner">
+      <div class="footer__payment">
+        <ul class="list-payment" role="list">
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/visa.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Visa</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/mastercard.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Mastercard</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/americanexpress.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">American Express</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/discover.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Discover</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/jcb.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">JCB</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/dinersclub.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Diners Club</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/applepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Apple Pay</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/googlepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Google Pay</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/link.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Link by Stripe</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/stripe.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Stripe</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/square.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Square</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script type="module" src="js/account-bootstrap.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script src="js/toast.js"></script>
+  <script type="module" src="js/account-forms.js"></script>
+  <script src="js/account-avatar.js"></script>
+</body>
+</html>

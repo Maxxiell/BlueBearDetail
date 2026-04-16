@@ -1,0 +1,5 @@
+# Supabase CLI (optional). Link your project: supabase link --project-ref YOUR_REF
+
+[functions.send-booking-email]
+# Allow booking flow for guests (no login). Abuse is limited by booking_id + recent created_at in the function.
+verify_jwt = false

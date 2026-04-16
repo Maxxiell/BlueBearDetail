@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Book mobile auto detailing — package, vehicle, schedule, and checkout.">
+  <title>Book your appointment | Blue Bear Detail</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="index.html"><img class="logo__img" src="logos/BBD-Site-Logo-horizontal.png" alt="Blue Bear Detail" width="220" height="48" loading="eager" decoding="async"></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-panel" aria-label="Main">
+      <a href="services.html">Services</a>
+      <a href="book.html">Book</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <div class="account-menu" data-account-menu>
+        <button type="button" class="account-menu__trigger" id="account-menu-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="account-menu-dropdown" aria-label="Account menu">
+          <i class="fa-solid fa-circle-user account-menu__lucide" aria-hidden="true"></i>
+        </button>
+        <div class="account-menu__dropdown" id="account-menu-dropdown" hidden role="menu">
+          <a href="account.html" class="account-menu__item" role="menuitem">Dashboard</a>
+          <a href="login.html" class="account-menu__item account-menu__item--login" role="menuitem">Log in</a>
+          <a href="signup.html" class="account-menu__item account-menu__item--signup" role="menuitem">Create account</a>
+          <button type="button" class="account-menu__item account-menu__item--logout" role="menuitem" hidden>Log out</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-dark page-book">
+    <div class="page-hero page-hero--dark">
+      <p class="booking-flow-back"><a href="book.html">← Booking overview</a></p>
+      <h1 data-bbd="bookflow.heroH1">Book your appointment</h1>
+      <p data-bbd="bookflow.heroP">Choose your package, vehicle type, add-ons, and a preferred time — then how you’d like to complete your request.</p>
+    </div>
+
+    <div class="content-block content-block--dark booking-wrap">
+      <div class="booking-progress" aria-label="Booking steps">
+        <ol class="booking-progress__steps" id="booking-progress-list">
+          <li class="booking-progress__step is-active" data-step-indicator="1"><span>Service</span></li>
+          <li class="booking-progress__step" data-step-indicator="2"><span>Vehicle</span></li>
+          <li class="booking-progress__step" data-step-indicator="3"><span>Add-ons</span></li>
+          <li class="booking-progress__step" data-step-indicator="4"><span>Schedule</span></li>
+          <li class="booking-progress__step" data-step-indicator="5"><span>Your details</span></li>
+          <li class="booking-progress__step" data-step-indicator="6"><span>Complete</span></li>
+        </ol>
+      </div>
+
+      <p class="booking-error" id="booking-error" role="alert" hidden></p>
+
+      <form id="booking-form" class="booking-form" novalidate data-current-step="1">
+        <div class="booking-step is-active" data-step="1" id="booking-step-1">
+          <h2 class="booking-step__title">Select a service</h2>
+          <p class="booking-step__hint">Pick one of our three packages.</p>
+          <div class="booking-choice-grid" role="radiogroup" aria-label="Service package">
+            <label class="booking-card">
+              <input type="radio" name="service" value="essential">
+              <span class="booking-card__body">
+                <span class="booking-card__eyebrow">Package · 01</span>
+                <span class="booking-card__title">Essential</span>
+                <span class="booking-card__desc">Wash, wheels, interior vacuum &amp; wipe, glass.</span>
+              </span>
+            </label>
+            <label class="booking-card booking-card--featured">
+              <input type="radio" name="service" value="complete">
+              <span class="booking-card__body">
+                <span class="booking-card__eyebrow">Package · 02</span>
+                <span class="booking-card__title">Complete</span>
+                <span class="booking-card__desc">Full interior &amp; exterior — our most popular balance.</span>
+              </span>
+            </label>
+            <label class="booking-card booking-card--disabled">
+              <input type="radio" name="service" value="signature" disabled>
+              <span class="booking-card__body">
+                <span class="booking-card__eyebrow">Package · 03</span>
+                <span class="booking-card__title">Signature</span>
+                <span class="booking-card__desc">Maximum gloss, polish, and protection options. Coming soon.</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="booking-step" data-step="2" id="booking-step-2" hidden>
+          <h2 class="booking-step__title">Vehicle type</h2>
+          <p class="booking-step__hint">Select the type that best matches your vehicle.</p>
+          <div class="booking-choice-grid booking-choice-grid--vehicle" role="radiogroup" aria-label="Vehicle type">
+            <label class="booking-card">
+              <input type="radio" name="vehicle" value="sedan-coupe" required>
+              <span class="booking-card__body">
+                <span class="booking-card__icon" aria-hidden="true"><i class="fa-solid fa-car-side"></i></span>
+                <span class="booking-card__eyebrow">Type</span>
+                <span class="booking-card__title">Sedan / Coupe</span>
+                <span class="booking-card__desc">Typical cars and two-door coupes.</span>
+              </span>
+            </label>
+            <label class="booking-card">
+              <input type="radio" name="vehicle" value="suv">
+              <span class="booking-card__body">
+                <span class="booking-card__icon" aria-hidden="true"><i class="fa-solid fa-truck-monster"></i></span>
+                <span class="booking-card__eyebrow">Type</span>
+                <span class="booking-card__title">SUV</span>
+                <span class="booking-card__desc">Crossovers, midsize and full-size SUVs.</span>
+              </span>
+            </label>
+            <label class="booking-card">
+              <input type="radio" name="vehicle" value="truck">
+              <span class="booking-card__body">
+                <span class="booking-card__icon" aria-hidden="true"><i class="fa-solid fa-truck-pickup"></i></span>
+                <span class="booking-card__eyebrow">Type</span>
+                <span class="booking-card__title">Truck</span>
+                <span class="booking-card__desc">Pickups and open-bed work vehicles.</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="booking-step" data-step="3" id="booking-step-3" hidden>
+          <h2 class="booking-step__title">Add-ons</h2>
+          <p class="booking-step__hint">Optional extras — prices reflect typical Denver-area mobile detail add-on rates; <strong>final cost is confirmed on inspection</strong> (vehicle size &amp; condition can change labor). <strong>Spray Wax Protection</strong>, <strong>Pet Hair Removal</strong>, and <strong>Stain Spot Treatment</strong> are already included in the Complete package (choose them below if you booked Essential, or if you need extra scope beyond what your package includes).</p>
+          <div class="booking-addon-grid">
+            <label class="booking-addon-card">
+              <span class="booking-addon-card__inner">
+                <span class="booking-addon-card__text">
+                  <span class="booking-addon-card__name">Spray Wax Protection</span>
+                  <span class="booking-addon-card__note">Already included in the Complete package.</span>
+                  <span class="booking-addon-card__price">+$35</span>
+                </span>
+                <span class="container booking-addon-card__check">
+                  <input type="checkbox" name="addon" value="spray-wax">
+                  <span class="checkmark" aria-hidden="true"></span>
+                </span>
+              </span>
+            </label>
+            <label class="booking-addon-card">
+              <span class="booking-addon-card__inner">
+                <span class="booking-addon-card__text">
+                  <span class="booking-addon-card__name">Pet Hair Removal</span>
+                  <span class="booking-addon-card__note">Already included in the Complete package.</span>
+                  <span class="booking-addon-card__price">+$59 <span class="booking-addon-card__price-note">from</span></span>
+                </span>
+                <span class="container booking-addon-card__check">
+                  <input type="checkbox" name="addon" value="pet-hair">
+                  <span class="checkmark" aria-hidden="true"></span>
+                </span>
+              </span>
+            </label>
+            <label class="booking-addon-card">
+              <span class="booking-addon-card__inner">
+                <span class="booking-addon-card__text">
+                  <span class="booking-addon-card__name">Leather Condition &amp; Protection</span>
+                  <span class="booking-addon-card__price">+$45</span>
+                </span>
+                <span class="container booking-addon-card__check">
+                  <input type="checkbox" name="addon" value="leather-condition">
+                  <span class="checkmark" aria-hidden="true"></span>
+                </span>
+              </span>
+            </label>
+            <div class="booking-addon-card-wrap booking-addon-card-wrap--has-info">
+              <label class="booking-addon-card">
+                <span class="booking-addon-card__inner">
+                  <span class="booking-addon-card__text booking-addon-card__text--with-side-info">
+                    <span class="booking-addon-card__name">Stain Spot Treatment</span>
+                    <span class="booking-addon-card__price">+$50</span>
+                  </span>
+                  <span class="container booking-addon-card__check">
+                    <input type="checkbox" name="addon" value="light-stain-spot-treatment">
+                    <span class="checkmark" aria-hidden="true"></span>
+                  </span>
+                </span>
+              </label>
+              <button type="button" class="booking-addon-card__info-btn booking-addon-card__info-btn--outside-label" data-addon-info="light-stain-spot-treatment" aria-label="Stain Spot Treatment disclaimer" title="Disclaimer">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              </button>
+            </div>
+            <label class="booking-addon-card">
+              <span class="booking-addon-card__inner">
+                <span class="booking-addon-card__text">
+                  <span class="booking-addon-card__name">Headliner Cleaning</span>
+                  <span class="booking-addon-card__price">+$40</span>
+                </span>
+                <span class="container booking-addon-card__check">
+                  <input type="checkbox" name="addon" value="headliner-cleaning">
+                  <span class="checkmark" aria-hidden="true"></span>
+                </span>
+              </span>
+            </label>
+            <label class="booking-addon-card">
+              <span class="booking-addon-card__inner">
+                <span class="booking-addon-card__text">
+                  <span class="booking-addon-card__name">Carpet Shampoo</span>
+                  <span class="booking-addon-card__price">+$75 <span class="booking-addon-card__price-note">from</span></span>
+                </span>
+                <span class="container booking-addon-card__check">
+                  <input type="checkbox" name="addon" value="carpet-shampoo">
+                  <span class="checkmark" aria-hidden="true"></span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="booking-step" data-step="4" id="booking-step-4" hidden>
+          <h2 class="booking-step__title">Date &amp; time</h2>
+          <p class="booking-step__hint">Pick a day on the calendar, then choose a start time (7:00 AM–5:00 PM). We’ll confirm availability.</p>
+          <div class="booking-schedule booking-schedule--split">
+            <div class="booking-calendar-panel" aria-label="Calendar">
+              <div class="booking-calendar__header">
+                <button type="button" class="booking-cal-nav" id="booking-cal-prev" aria-label="Previous month">‹</button>
+                <h3 class="booking-calendar__month" id="booking-cal-month-label"></h3>
+                <button type="button" class="booking-cal-nav" id="booking-cal-next" aria-label="Next month">›</button>
+              </div>
+              <div class="booking-calendar__weekdays" aria-hidden="true">
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="booking-calendar__grid" id="booking-cal-grid" role="grid"></div>
+              <input type="hidden" name="bookingDate" id="booking-date" value="">
+            </div>
+            <div class="booking-time-panel">
+              <label for="booking-time-select">Start time</label>
+              <select id="booking-time-select" name="bookingTime" required>
+                <option value="">— Select time —</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-step" data-step="5" id="booking-step-5" hidden>
+          <h2 class="booking-step__title">Contact &amp; vehicle</h2>
+          <p class="booking-step__hint">We use this to confirm your appointment and find you on site.</p>
+          <div class="booking-profile-tools" id="booking-profile-tools" hidden>
+            <p class="booking-profile-tools__hint">Signed in? You can use your saved account details and vehicles.</p>
+            <div class="booking-profile-tools__actions">
+              <button type="button" class="btn btn-outline booking-profile-tools__btn" id="booking-autofill-details-btn" hidden>
+                Autofill my details
+              </button>
+              <div class="booking-profile-tools__vehicle" id="booking-saved-vehicle-wrap" hidden>
+                <label for="booking-saved-vehicle-select">Saved vehicles</label>
+                <div class="booking-profile-tools__vehicle-row">
+                  <select id="booking-saved-vehicle-select" aria-label="Saved vehicles"></select>
+                  <button type="button" class="btn btn-outline booking-profile-tools__btn" id="booking-use-vehicle-btn">
+                    Use selected vehicle
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="booking-profile-tools__status" id="booking-profile-tools-status" role="status" hidden></p>
+          </div>
+          <div class="booking-fields">
+            <div>
+              <label for="cust-first-name">First name</label>
+              <input id="cust-first-name" name="custFirstName" type="text" autocomplete="given-name" required>
+            </div>
+            <div>
+              <label for="cust-last-name">Last name</label>
+              <input id="cust-last-name" name="custLastName" type="text" autocomplete="family-name" required>
+            </div>
+            <div>
+              <label for="cust-email">Email</label>
+              <input id="cust-email" name="custEmail" type="email" autocomplete="email" required>
+            </div>
+            <div>
+              <label for="cust-phone">Phone</label>
+              <input id="cust-phone" name="custPhone" type="tel" autocomplete="tel" required>
+            </div>
+            <div class="booking-fields__full">
+              <label for="cust-address">Service address</label>
+              <input id="cust-address" name="custAddress" type="text" autocomplete="street-address" required placeholder="Street, city, ZIP">
+            </div>
+            <div>
+              <label for="veh-year">Vehicle year</label>
+              <select id="veh-year" name="vehYear" required></select>
+            </div>
+            <div>
+              <label for="veh-make">Make</label>
+              <select id="veh-make" name="vehMake" required></select>
+            </div>
+            <div class="booking-fields__full" id="veh-make-custom-wrap" hidden>
+              <label for="veh-make-custom">Make <span class="optional">(specify)</span></label>
+              <input id="veh-make-custom" name="vehMakeCustom" type="text" autocomplete="off" placeholder="e.g. Saturn">
+            </div>
+            <div id="veh-model-wrap">
+              <label for="veh-model">Model</label>
+              <select id="veh-model" name="vehModel"></select>
+            </div>
+            <div class="booking-fields__full" id="veh-model-custom-wrap" hidden>
+              <label for="veh-model-custom">Model <span class="optional">(specify)</span></label>
+              <input id="veh-model-custom" name="vehModelCustom" type="text" autocomplete="off" placeholder="e.g. Custom trim">
+            </div>
+            <div>
+              <label for="veh-color">Color / trim <span class="optional">(optional)</span></label>
+              <input id="veh-color" name="vehColor" type="text" autocomplete="off">
+            </div>
+            <div class="booking-fields__full">
+              <label for="cust-notes">Special instructions</label>
+              <textarea id="cust-notes" name="custNotes" rows="4" placeholder="Gate codes, parking, allergies, access notes…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-step" data-step="6" id="booking-step-6" hidden>
+          <h2 class="booking-step__title">Complete your request</h2>
+          <p class="booking-step__hint">Choose how you’d like to proceed. We’ll follow up to confirm.</p>
+          <div class="booking-complete-grid" role="radiogroup" aria-label="How to complete">
+            <label class="booking-complete-card booking-complete-card--book">
+              <span class="booking-complete-card__inner">
+                <input type="radio" name="checkoutMethod" value="book" class="booking-complete-card__radio" checked aria-label="Book appointment">
+                <span class="booking-complete-card__panel">
+                  <span class="booking-complete-card__title">Book appointment</span>
+                  <span class="booking-complete-card__desc">We’ll confirm your appointment by phone or email. No payment required today.</span>
+                  <span class="booking-complete-card__secure"><i class="fa-solid fa-book" aria-hidden="true"></i> Book Request</span>
+                </span>
+              </span>
+            </label>
+            <label class="booking-complete-card booking-complete-card--pay">
+              <span class="booking-complete-card__inner">
+                <input type="radio" name="checkoutMethod" value="pay" class="booking-complete-card__radio" aria-label="Pay online">
+                <span class="booking-complete-card__panel">
+                  <span class="booking-complete-card__badge">Coming soon</span>
+                  <span class="booking-complete-card__title">Pay online</span>
+                  <span class="booking-complete-card__desc">Secure checkout after we review your request — launching soon.</span>
+                  <span class="booking-complete-card__secure"><i class="fa-brands fa-stripe" aria-hidden="true"></i> Secure Checkout</span>
+                </span>
+              </span>
+            </label>
+          </div>
+          <div class="booking-pay-notice" id="booking-pay-notice">
+            <label class="booking-pay-ack container">
+              <input type="checkbox" name="payInspectionAck" id="pay-inspection-ack" value="yes">
+              <span class="booking-pay-ack__box" aria-hidden="true"></span>
+              <span class="booking-pay-ack__text">I understand that the quoted price is subject to change based on vehicle inspection.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="booking-actions">
+          <button type="button" class="btn btn-outline booking-back" id="booking-back" hidden>Back</button>
+          <button type="button" class="btn btn-primary booking-next" id="booking-next">Continue</button>
+          <button type="submit" class="btn btn-primary booking-submit booking-submit--book" id="booking-submit-book" hidden>Submit request</button>
+          <button type="submit" class="btn btn-primary booking-submit booking-submit--pay" id="booking-submit-pay" hidden>Proceed to payment</button>
+        </div>
+      </form>
+
+      <div class="booking-done" id="booking-done" hidden>
+        <div class="booking-done__inner">
+          <h2 class="booking-done__title">Request received</h2>
+          <p class="booking-done__text" id="booking-done-text">Your booking request was saved. We’ll follow up by phone or email to confirm.</p>
+          <pre class="booking-done__summary" id="booking-summary-text"></pre>
+          <div class="booking-done__actions">
+            <button type="button" class="btn btn-outline" id="booking-copy-summary">Copy details</button>
+            <a class="btn btn-primary" href="contact.html">Contact</a>
+            <a class="btn btn-outline" href="index.html">Home</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <dialog id="booking-addon-info-dialog" class="package-info-dialog" aria-labelledby="booking-addon-info-title">
+      <div class="package-info-dialog__panel">
+        <div class="package-info-dialog__header">
+          <h2 id="booking-addon-info-title" class="package-info-dialog__title">Add-on details</h2>
+          <button type="button" class="package-info-dialog__close" id="booking-addon-info-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="package-info-dialog__body" id="booking-addon-info-body"></div>
+      </div>
+    </dialog>
+  </main>
+
+  <div class="footer-payments-bar footer-payments-bar--dark" aria-label="Accepted payments">
+    <div class="footer-payments-bar__inner">
+      <div class="footer__payment">
+        <ul class="list-payment" role="list">
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/visa.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Visa</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/mastercard.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Mastercard</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/americanexpress.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">American Express</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/discover.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Discover</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/jcb.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">JCB</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/dinersclub.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Diners Club</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/applepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Apple Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/googlepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Google Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/link.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Link by Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/stripe.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/square.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Square</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-nav__col">
+          <a href="index.html">Home <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="services.html">Services <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="gallery.html">Gallery <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+        <div class="footer-nav__col">
+          <a href="about.html">About <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="contact.html">Contact <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="subscriptions.html">Subscriptions <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+      </nav>
+      <div class="footer-col footer-col--phone">
+        <p class="footer-call-label">Call</p>
+        <a class="footer-phone" href="tel:+17206012503">720&nbsp;601&nbsp;2503</a>
+      </div>
+      <div class="footer-col footer-col--legal-social">
+        <div class="footer-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+        <div class="social-row" aria-label="Social media">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script type="module" src="js/auth-dropdown.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script src="js/booking-vehicle-data.js"></script>
+  <script src="js/booking.js"></script>
+  <script type="module" src="js/booking-autofill.js"></script>
+</body>
+</html>

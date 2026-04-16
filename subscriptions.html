@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Monthly detailing credits and service subscriptions — Blue Bear Detail Denver.">
+  <title>Subscriptions &amp; memberships | Blue Bear Detail</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="index.html"><img class="logo__img" src="logos/BBD-Site-Logo-horizontal.png" alt="Blue Bear Detail" width="220" height="48" loading="eager" decoding="async"></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-panel" aria-label="Main">
+      <a href="services.html">Services</a>
+      <a href="book.html">Book</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <div class="account-menu" data-account-menu>
+        <button type="button" class="account-menu__trigger" id="account-menu-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="account-menu-dropdown" aria-label="Account menu">
+          <i class="fa-solid fa-circle-user account-menu__lucide" aria-hidden="true"></i>
+        </button>
+        <div class="account-menu__dropdown" id="account-menu-dropdown" hidden role="menu">
+          <a href="account.html" class="account-menu__item" role="menuitem">Dashboard</a>
+          <a href="login.html" class="account-menu__item account-menu__item--login" role="menuitem">Log in</a>
+          <a href="signup.html" class="account-menu__item account-menu__item--signup" role="menuitem">Create account</a>
+          <button type="button" class="account-menu__item account-menu__item--logout" role="menuitem" hidden>Log out</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-dark page-subscriptions">
+    <div class="page-hero page-hero--dark">
+      <h1 data-bbd="subscriptions.heroH1">Subscriptions &amp; memberships</h1>
+      <p data-bbd="subscriptions.heroP">Separate from one-time booking — enroll anytime; we confirm vehicle and pricing before you’re charged.</p>
+    </div>
+
+    <div class="content-block content-block--dark">
+      <div class="bbd-coming-soon-gate bbd-coming-soon-gate--blur" data-bbd-coming-soon>
+        <div class="bbd-coming-soon-gate__track">
+      <p class="subs-intro"><a href="book.html">← Back to Book &amp; plans</a></p>
+
+      <section class="subs-band" aria-labelledby="subs-credits-heading">
+        <h2 id="subs-credits-heading" class="subs-band__title">Monthly detail credits</h2>
+        <p class="subs-band__lede">Credit stacks month to month and applies when you book a package.</p>
+        <div class="subs-grid subs-grid--tri">
+          <article class="subs-card" id="credit-25">
+            <p class="subs-card__eyebrow">Tier 1</p>
+            <h3 class="subs-card__title">$25 / month credit</h3>
+            <p class="subs-card__price"><span>$25</span> added each billing cycle</p>
+            <ul class="subs-card__list">
+              <li>Use toward Essential, Complete, or Signature</li>
+              <li>Pause or cancel per your agreement</li>
+            </ul>
+            <div class="subs-card__cta">
+              <a class="btn btn-primary" href="contact.html">Ask about this plan</a>
+            </div>
+          </article>
+
+          <article class="subs-card subs-card--featured" id="credit-50">
+            <p class="subs-card__eyebrow">Tier 2</p>
+            <h3 class="subs-card__title">$50 / month credit</h3>
+            <p class="subs-card__price"><span>$50</span> added each billing cycle</p>
+            <ul class="subs-card__list">
+              <li>Faster path to full packages or add-ons</li>
+              <li>Same flexibility as Tier 1</li>
+            </ul>
+            <div class="subs-card__cta">
+              <a class="btn btn-primary" href="contact.html">Ask about this plan</a>
+            </div>
+          </article>
+
+          <article class="subs-card" id="service-plan">
+            <p class="subs-card__eyebrow">Tier 3</p>
+            <h3 class="subs-card__title">Monthly service</h3>
+            <p class="subs-card__price">Essential, Complete, or <span>Signature</span> each month</p>
+            <ul class="subs-card__list">
+              <li>Recurring detail on your schedule</li>
+              <li>Quoted by vehicle &amp; location — not via the booking wizard</li>
+            </ul>
+            <div class="subs-card__cta">
+              <a class="btn btn-primary" href="contact.html">Discuss monthly service</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="subs-band" aria-labelledby="subs-pass-heading">
+        <h2 id="subs-pass-heading" class="subs-band__title">Wash Pass X<sup class="subs-band__reg">&reg;</sup></h2>
+        <p class="subs-band__lede">Membership tiers with wallet pass delivery after enrollment.</p>
+        <div class="subs-grid subs-grid--tri">
+          <article class="subs-card" id="wash-pass-silver">
+            <p class="subs-card__eyebrow">Silver</p>
+            <h3 class="subs-card__title">Entry tier</h3>
+            <p class="subs-card__price">From <span>quoted monthly</span></p>
+            <ul class="subs-card__list">
+              <li>Apple Wallet &amp; Google Wallet pass</li>
+              <li>Member rates on add-ons</li>
+            </ul>
+            <div class="subs-card__cta">
+              <a class="btn btn-primary" href="contact.html">Subscribe — Silver</a>
+            </div>
+          </article>
+
+          <article class="subs-card subs-card--featured" id="wash-pass-blue">
+            <p class="subs-card__eyebrow">Blue</p>
+            <h3 class="subs-card__title">Mid tier</h3>
+            <p class="subs-card__price">From <span>quoted monthly</span></p>
+            <ul class="subs-card__list">
+              <li>Priority scheduling vs Silver</li>
+              <li>Wallet pass + renewal bonuses</li>
+            </ul>
+            <div class="subs-card__cta">
+              <a class="btn btn-primary" href="contact.html">Subscribe — Blue</a>
+            </div>
+          </article>
+
+          <article class="subs-card" id="wash-pass-gold">
+            <p class="subs-card__eyebrow">Gold</p>
+            <h3 class="subs-card__title">Top tier</h3>
+            <p class="subs-card__price">From <span>quoted monthly</span></p>
+            <ul class="subs-card__list">
+              <li>Richest monthly value &amp; perks</li>
+              <li>First-in-line booking windows</li>
+            </ul>
+            <div class="subs-card__cta">
+              <a class="btn btn-primary" href="contact.html">Subscribe — Gold</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <p class="subs-footnote">Final pricing follows vehicle class and service area. Payment processing can connect when you go live — enroll through <a href="contact.html">Contact</a> or <a href="tel:+17206012503">720&nbsp;601&nbsp;2503</a>.</p>
+        </div>
+        <div class="bbd-coming-soon-gate__overlay" aria-hidden="true">
+          <div class="bbd-coming-soon-gate__message">
+            <p class="bbd-coming-soon-gate__label">Coming soon</p>
+            <p class="bbd-coming-soon-gate__hint">Subscriptions and memberships are not enrollable yet. Use preview access to review full copy and layout.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="footer-payments-bar" aria-label="Accepted payments">
+    <div class="footer-payments-bar__inner">
+      <div class="footer__payment">
+        <ul class="list-payment" role="list">
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/visa.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Visa</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/mastercard.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Mastercard</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/americanexpress.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">American Express</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/discover.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Discover</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/jcb.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">JCB</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/dinersclub.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Diners Club</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/applepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Apple Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/googlepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Google Pay</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/link.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Link by Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/stripe.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Stripe</span>
+          </li>
+          <li class="list-payment__item">
+            <img class="list-payment__icon" src="logos/payments/square.svg" alt="" width="38" height="24" loading="lazy" decoding="async">
+            <span class="sr-only">Square</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-nav__col">
+          <a href="index.html">Home <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="services.html">Services <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="gallery.html">Gallery <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+        <div class="footer-nav__col">
+          <a href="about.html">About <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="contact.html">Contact <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+          <a href="subscriptions.html" aria-current="page">Subscriptions <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+      </nav>
+      <div class="footer-col footer-col--phone">
+        <p class="footer-call-label">Call</p>
+        <a class="footer-phone" href="tel:+17206012503">720&nbsp;601&nbsp;2503</a>
+      </div>
+      <div class="footer-col footer-col--legal-social">
+        <div class="footer-links">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+        <div class="social-row" aria-label="Social media">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script type="module" src="js/auth-dropdown.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script src="js/coming-soon-unlock.js"></script>
+</body>
+</html>

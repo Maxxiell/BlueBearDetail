@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Blue Bear Detail admin scheduling controls.">
+  <title>Admin | Blue Bear Detail</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="page-admin">
+  <header class="site-header">
+    <a class="logo" href="index.html"><img class="logo__img" src="logos/BBD-Site-Logo-horizontal.png" alt="Blue Bear Detail" width="220" height="48" loading="eager" decoding="async"></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-panel" aria-label="Main">
+      <a href="services.html">Services</a>
+      <a href="book.html">Book</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <div class="account-menu" data-account-menu>
+        <button type="button" class="account-menu__trigger" id="account-menu-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="account-menu-dropdown" aria-label="Account menu">
+          <i class="fa-solid fa-circle-user account-menu__lucide" aria-hidden="true"></i>
+        </button>
+        <div class="account-menu__dropdown" id="account-menu-dropdown" hidden role="menu">
+          <a href="account.html" class="account-menu__item" role="menuitem">Dashboard</a>
+          <a href="admin.html" class="account-menu__item account-menu__item--admin" role="menuitem" aria-current="page">Admin</a>
+          <a href="login.html" class="account-menu__item account-menu__item--login" role="menuitem">Log in</a>
+          <a href="signup.html" class="account-menu__item account-menu__item--signup" role="menuitem">Create account</a>
+          <button type="button" class="account-menu__item account-menu__item--logout" role="menuitem" hidden>Log out</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-dark">
+    <div class="page-hero page-hero--dark page-hero--admin">
+      <p class="page-hero__kicker">Blue Bear Detail · Admin</p>
+      <h1 class="page-hero__title" data-bbd="admin.heroH1">Admin</h1>
+      <p class="page-hero__lede" data-bbd="admin.heroP">Rates, copy, and booking availability.</p>
+    </div>
+
+    <div class="content-block content-block--dark admin-panel">
+      <div class="admin-board">
+
+        <section class="admin-section" aria-labelledby="admin-profile-photo-heading">
+          <header class="admin-section__header">
+            <span class="admin-section__icon" aria-hidden="true"><i class="fa-solid fa-camera"></i></span>
+            <div class="admin-section__titles">
+              <h2 id="admin-profile-photo-heading" class="admin-section__title">Profile photo</h2>
+              <p class="admin-section__lead">Shown on the account button in the header when you’re signed in. Saved in this browser only.</p>
+            </div>
+          </header>
+          <div class="admin-section__body admin-profile-photo" data-bbd-account-avatar data-bbd-avatar-theme="admin">
+            <div class="admin-profile-photo__preview-wrap">
+              <img data-bbd-avatar-preview class="admin-profile-photo__preview" alt="" width="120" height="120" hidden decoding="async">
+              <div data-bbd-avatar-placeholder class="admin-profile-photo__placeholder" aria-hidden="true">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </div>
+            <div>
+              <div class="admin-profile-photo__actions">
+                <label for="bbd-avatar-file-admin" class="btn btn-admin-ghost">Choose image</label>
+                <input id="bbd-avatar-file-admin" data-bbd-avatar-file class="admin-profile-photo__file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+                <button data-bbd-avatar-save type="button" class="btn btn-admin-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save</button>
+                <button data-bbd-avatar-remove type="button" class="btn btn-admin-ghost">Remove</button>
+              </div>
+              <p class="admin-profile-photo__hint">JPEG, PNG, WebP, or GIF. After choosing a file, drag and zoom to fit the circle, then use this photo and Save.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" aria-labelledby="admin-pricing-heading">
+          <header class="admin-section__header">
+            <span class="admin-section__icon" aria-hidden="true"><i class="fa-solid fa-sack-dollar"></i></span>
+            <div class="admin-section__titles">
+              <h2 id="admin-pricing-heading" class="admin-section__title">Rates &amp; promo</h2>
+              <p class="admin-section__lead">Service prices and homepage promo strip.</p>
+            </div>
+          </header>
+          <div class="admin-section__body admin-subgrid admin-subgrid--2">
+            <article class="admin-subcard">
+              <h3 class="admin-subcard__title"><i class="fa-solid fa-layer-group admin-subcard__ico" aria-hidden="true"></i> Packages</h3>
+              <div class="admin-grid">
+                <div>
+                  <label for="price-essential">Essential price</label>
+                  <input id="price-essential" type="number" min="0" step="0.01" value="99.99">
+                </div>
+                <div>
+                  <label for="price-complete">Complete price</label>
+                  <input id="price-complete" type="number" min="0" step="0.01" value="249.99">
+                </div>
+                <div>
+                  <label for="price-signature">Signature price</label>
+                  <input id="price-signature" type="number" min="0" step="0.01" value="339.99">
+                </div>
+              </div>
+            </article>
+            <article class="admin-subcard">
+              <h3 class="admin-subcard__title"><i class="fa-solid fa-bullhorn admin-subcard__ico" aria-hidden="true"></i> Promo strip</h3>
+              <div class="admin-grid">
+                <div>
+                  <label for="promo-discount">Discount %</label>
+                  <input id="promo-discount" type="number" min="0" max="100" step="1" value="15">
+                </div>
+                <div>
+                  <label for="promo-code">Promo code</label>
+                  <input id="promo-code" type="text" value="WASH15">
+                </div>
+                <div>
+                  <label for="promo-text">Promo text</label>
+                  <input id="promo-text" type="text" value="15% OFF FOR NEW CUSTOMERS">
+                </div>
+                <div class="admin-field-span">
+                  <label class="admin-checkbox-label">
+                    <input type="checkbox" id="promo-enabled" checked>
+                    <span>Apply promo pricing on Services page (sale price + “With Promo Code” on cards; top banner uses promo text &amp; code)</span>
+                  </label>
+                </div>
+              </div>
+            </article>
+          </div>
+          <article class="admin-subcard admin-subcard--package-bullets">
+            <h3 class="admin-subcard__title"><i class="fa-solid fa-list-check admin-subcard__ico" aria-hidden="true"></i> Services page — package bullets</h3>
+            <p class="admin-subcard__hint">One line per bullet. Shown on each package card on <strong>services.html</strong>. Save with <strong>Rates &amp; promo</strong> below.</p>
+            <div class="admin-grid admin-grid--package-bullets">
+              <div>
+                <label for="package-bullets-essential">Essential</label>
+                <textarea id="package-bullets-essential" rows="5" spellcheck="true"></textarea>
+              </div>
+              <div>
+                <label for="package-bullets-complete">Complete</label>
+                <textarea id="package-bullets-complete" rows="5" spellcheck="true"></textarea>
+              </div>
+              <div>
+                <label for="package-bullets-signature">Signature</label>
+                <textarea id="package-bullets-signature" rows="5" spellcheck="true"></textarea>
+              </div>
+            </div>
+          </article>
+          <footer class="admin-section__footer">
+            <button id="site-settings-save-pricing" class="btn btn-admin-primary" type="button"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save</button>
+          </footer>
+        </section>
+
+        <section class="admin-section" aria-labelledby="admin-page-text-heading">
+          <header class="admin-section__header">
+            <span class="admin-section__icon" aria-hidden="true"><i class="fa-solid fa-bag-shopping"></i></span>
+            <div class="admin-section__titles">
+              <h2 id="admin-page-text-heading" class="admin-section__title">Storefront copy</h2>
+              <p class="admin-section__lead">Tap a page to expand. <strong>Edit</strong> / <strong>Save</strong> per page · stored in this browser.</p>
+            </div>
+          </header>
+          <div class="admin-section__body">
+            <div class="admin-page-stack" id="admin-page-edits-root"></div>
+          </div>
+        </section>
+
+        <section class="admin-section" aria-labelledby="admin-demo-data-heading">
+          <header class="admin-section__header">
+            <span class="admin-section__icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
+            <div class="admin-section__titles">
+              <h2 id="admin-demo-data-heading" class="admin-section__title">Ledger preview</h2>
+              <p class="admin-section__lead">Sample clients and payments. Refund paid rows, or add store credit &amp; points — all stored in this browser until you wire a backend.</p>
+            </div>
+          </header>
+          <div class="admin-section__body admin-ledger">
+            <div class="admin-ledger__segment">
+              <h3 class="admin-ledger__label">Clients</h3>
+              <div class="admin-data-table-wrap admin-data-table-wrap--ledger">
+                <table class="admin-data-table" aria-label="Sample customers">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">Since</th>
+                      <th scope="col">Credit</th>
+                      <th scope="col">Pts</th>
+                      <th scope="col">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-demo-customers-body"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="admin-ledger__segment">
+              <h3 class="admin-ledger__label">Payments</h3>
+              <div class="admin-data-table-wrap admin-data-table-wrap--ledger">
+                <table class="admin-data-table" aria-label="Sample payments">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Customer</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Method</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-demo-payments-body"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="admin-ledger__segment admin-ledger__segment--credit" aria-labelledby="admin-credit-heading">
+              <h3 class="admin-ledger__label" id="admin-credit-heading">Credits &amp; loyalty</h3>
+              <p class="admin-ledger__tool-lede">Add store credit (dollars) and/or reward points to a customer. Sample data only — connect your billing system later.</p>
+              <div class="admin-grid admin-grid--credit-tools">
+                <div>
+                  <label for="admin-balance-customer">Customer</label>
+                  <select id="admin-balance-customer" class="admin-panel-select">
+                    <option value="">— Select customer —</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="admin-balance-credit">Store credit ($)</label>
+                  <input id="admin-balance-credit" type="number" min="0" step="0.01" placeholder="0.00">
+                </div>
+                <div>
+                  <label for="admin-balance-points">Reward points</label>
+                  <input id="admin-balance-points" type="number" min="0" step="1" placeholder="0">
+                </div>
+              </div>
+              <p class="admin-ledger__tool-hint">Enter one or both — amounts add to their current balance in this preview.</p>
+              <button id="admin-balance-apply" class="btn btn-admin-primary" type="button"><i class="fa-solid fa-gift" aria-hidden="true"></i> Apply credit / points</button>
+            </div>
+          </div>
+          <footer class="admin-section__footer admin-section__footer--split">
+            <button id="admin-demo-data-reset" class="btn btn-admin-ghost" type="button"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset samples</button>
+          </footer>
+        </section>
+
+        <section class="admin-section" aria-labelledby="admin-calendar-heading">
+          <header class="admin-section__header">
+            <span class="admin-section__icon" aria-hidden="true"><i class="fa-solid fa-calendar-week"></i></span>
+            <div class="admin-section__titles">
+              <h2 id="admin-calendar-heading" class="admin-section__title">Availability</h2>
+              <p class="admin-section__lead">Blackout full days or specific hours on the booking calendar.</p>
+            </div>
+          </header>
+          <div class="admin-section__body admin-availability">
+            <div class="admin-availability__panel" aria-labelledby="admin-days-heading">
+              <h3 id="admin-days-heading" class="admin-availability__title">Full day blackout</h3>
+              <p class="admin-availability__hint admin-empty">Those dates cannot be chosen in the booking flow.</p>
+              <div class="admin-availability__row admin-availability__row--day">
+                <div class="admin-availability__field">
+                  <label for="block-day-date">Date</label>
+                  <input id="block-day-date" class="admin-input-datetime" type="date">
+                </div>
+                <div class="admin-availability__actions">
+                  <button id="block-day-add" class="btn btn-admin-primary" type="button"><i class="fa-solid fa-ban" aria-hidden="true"></i> Block day</button>
+                </div>
+              </div>
+              <ul id="blocked-days-list" class="admin-list"></ul>
+              <p id="blocked-days-empty" class="admin-empty admin-list-msg">No blocked days yet.</p>
+            </div>
+            <div class="admin-availability__panel" aria-labelledby="admin-times-heading">
+              <h3 id="admin-times-heading" class="admin-availability__title">Time range blackout</h3>
+              <p class="admin-availability__hint admin-empty">Same calendar day — e.g. block 11:00–14:00.</p>
+              <div class="admin-availability__row admin-availability__row--times">
+                <div class="admin-availability__field">
+                  <label for="block-time-date">Date</label>
+                  <input id="block-time-date" class="admin-input-datetime" type="date">
+                </div>
+                <div class="admin-availability__field">
+                  <label for="block-time-start">Start</label>
+                  <input id="block-time-start" class="admin-input-datetime" type="time" step="1800" value="09:00">
+                </div>
+                <div class="admin-availability__field">
+                  <label for="block-time-end">End</label>
+                  <input id="block-time-end" class="admin-input-datetime" type="time" step="1800" value="12:00">
+                </div>
+              </div>
+              <div class="admin-availability__row admin-availability__row--submit">
+                <button id="block-time-add" class="btn btn-admin-primary" type="button"><i class="fa-solid fa-clock" aria-hidden="true"></i> Block time range</button>
+              </div>
+              <ul id="blocked-times-list" class="admin-list"></ul>
+              <p id="blocked-times-empty" class="admin-empty admin-list-msg">No blocked time ranges yet.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <div class="footer-payments-bar footer-payments-bar--dark" aria-label="Accepted payments">
+    <div class="footer-payments-bar__inner">
+      <div class="footer__payment">
+        <ul class="list-payment" role="list">
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/visa.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Visa</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/mastercard.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Mastercard</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/americanexpress.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">American Express</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/discover.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Discover</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/jcb.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">JCB</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/dinersclub.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Diners Club</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/applepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Apple Pay</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/googlepay.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Google Pay</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/link.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Link by Stripe</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/stripe.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Stripe</span></li>
+          <li class="list-payment__item"><img class="list-payment__icon" src="logos/payments/square.svg" alt="" width="38" height="24" loading="lazy" decoding="async"><span class="sr-only">Square</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/auth-dropdown.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/site-settings.js"></script>
+  <script src="js/toast.js"></script>
+  <script type="module" src="js/admin.js"></script>
+  <script src="js/account-avatar.js"></script>
+</body>
+</html>
