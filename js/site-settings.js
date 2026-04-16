@@ -299,5 +299,19 @@
     applyServices(settings);
   }
 
+  window.bbdMergeRemoteSiteSettings = function (remote) {
+    if (!remote || typeof remote !== "object") return;
+    var cur = readSettings();
+    var merged = Object.assign({}, cur, remote);
+    store.setItem(SITE_SETTINGS_KEY, JSON.stringify(merged));
+    apply();
+  };
+
+  window.addEventListener("storage", function (e) {
+    if (e.key !== SITE_SETTINGS_KEY) return;
+    if (e.newValue == null) return;
+    apply();
+  });
+
   apply();
 })();

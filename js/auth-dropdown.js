@@ -1,9 +1,9 @@
-import { supabase } from "./auth-client.js";
+import { supabase, clearPersistedAuthSession } from "./auth-client.js";
 import { isSupabaseConfigured } from "./supabase-config.js";
+import { getAvatarStorageKey, isAvatarStorageKey } from "./avatar-storage.js";
 
 const ADMIN_AUTH_KEY = "bbdAdminAuth";
 const ADMIN_AUTH_COOKIE = "bbdps_bbdAdminAuth__0";
-const AVATAR_STORAGE_KEY = "bbdAccountAvatar";
 const DEFAULT_AVATAR_URL = "logos/bearpoly.jpg";
 const ADMIN_EMAIL_ALLOWED = "deleteddata@outlook.com";
 const store =
@@ -97,8 +97,14 @@ function setupMenu(root) {
     wrap.insertBefore(avatarEl, icon);
   }
 
-  function applyTriggerAvatar(authed) {
-    let customUrl = store.getItem(AVATAR_STORAGE_KEY);
+  async function applyTriggerAvatar(authed) {
+    let customUrl = null;
+    try {
+      const key = await getAvatarStorageKey();
+      customUrl = store.getItem(key);
+    } catch (_e) {
+      customUrl = null;
+    }
     let url = isAvatarUrl(customUrl) ? customUrl.trim() : DEFAULT_AVATAR_URL;
     const hasPhoto =
       !!authed &&
@@ -235,7 +241,7 @@ function setupMenu(root) {
     if (signupEl) signupEl.hidden = authed || onSignup;
     if (logoutEl) logoutEl.hidden = !authed;
     if (adminEl) adminEl.hidden = !canSeeAdmin;
-    applyTriggerAvatar(authed);
+    applyTriggerAvatar(authed).catch(function () {});
   }
 
   window.addEventListener("bbd-account-avatar-changed", function () {
@@ -249,7 +255,7 @@ function setupMenu(root) {
   });
 
   window.addEventListener("storage", function (e) {
-    if (e.key !== AVATAR_STORAGE_KEY) return;
+    if (!e.key || !isAvatarStorageKey(e.key)) return;
     if (isSupabaseConfigured()) {
       supabase.auth.getSession().then(function (res) {
         syncAuth(res.data && res.data.session ? res.data.session : null);
@@ -264,8 +270,15 @@ function setupMenu(root) {
       clearAdminAuth();
       if (isSupabaseConfigured()) {
         try {
-          await supabase.auth.signOut();
-        } catch (_e) {}
+          var signOutRes = await supabase.auth.signOut({ scope: "global" });
+          if (signOutRes.error) {
+            console.error("[auth] signOut", signOutRes.error);
+            clearPersistedAuthSession();
+          }
+        } catch (e) {
+          console.error("[auth] signOut", e);
+          clearPersistedAuthSession();
+        }
       }
       close();
       window.location.href = "signed-out.html";

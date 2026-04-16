@@ -5249,6 +5249,29 @@ main.page-account.page-dark {
   color: rgba(255, 255, 255, 0.96);
 }
 
+.auth-provider-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 1.15rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.auth-provider-note__logo {
+  flex-shrink: 0;
+  display: block;
+  width: 14px;
+  height: 14px;
+  opacity: 0.65;
+}
+
 .auth-page-card__lede {
   margin: 0 0 1.25rem;
   font-size: 0.9rem;

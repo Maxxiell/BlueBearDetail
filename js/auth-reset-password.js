@@ -51,7 +51,7 @@ if (form) {
     e.preventDefault();
     showError("");
     if (!isSupabaseConfigured()) {
-      showError("Supabase is not configured.");
+      showError("Password reset is temporarily unavailable. Please try again later.");
       return;
     }
     if (!(await ensureRecoverySession())) {

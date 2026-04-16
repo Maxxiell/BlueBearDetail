@@ -10,6 +10,20 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   },
 });
 
+/**
+ * Clears Supabase session keys from localStorage (e.g. if signOut() failed offline).
+ * Keys match the pattern used by supabase-js: sb-<project-ref>-auth-token…
+ */
+export function clearPersistedAuthSession() {
+  try {
+    Object.keys(localStorage).forEach(function (key) {
+      if (/^sb-[\w-]+-auth-token/.test(key)) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (_e) {}
+}
+
 if (!isSupabaseConfigured()) {
   console.warn(
     "[Blue Bear] Set SUPABASE_URL and SUPABASE_ANON_KEY in js/supabase-config.js (Supabase Dashboard → Settings → API)."

@@ -79,7 +79,7 @@ if (forgotForm) {
     showError("");
     showForgotOk("");
     if (!isSupabaseConfigured()) {
-      showError("Supabase is not configured. Paste your URL and anon key into js/supabase-config.js.");
+      showError("Account sign-in is temporarily unavailable. Please try again later.");
       return;
     }
     var email = String((forgotEmail && forgotEmail.value) || "").trim();
@@ -114,7 +114,7 @@ if (form) {
     }
 
     if (!isSupabaseConfigured()) {
-      showError("Supabase is not configured. Paste your URL and anon key into js/supabase-config.js.");
+      showError("Account sign-in is temporarily unavailable. Please try again later.");
       return;
     }
 

@@ -75,7 +75,9 @@ async function submitBookAppointmentInner(form, summaryText) {
     booking_time: String(fd.get("bookingTime") || ""),
     cust_first_name: String(fd.get("custFirstName") || "").trim(),
     cust_last_name: String(fd.get("custLastName") || "").trim(),
-    cust_email: String(fd.get("custEmail") || "").trim(),
+    cust_email: String(fd.get("custEmail") || "")
+      .trim()
+      .toLowerCase(),
     cust_phone: String(fd.get("custPhone") || "").trim(),
     cust_address: String(fd.get("custAddress") || "").trim(),
     veh_year: year,

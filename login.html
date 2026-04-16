@@ -19,7 +19,6 @@
     <nav class="nav-panel" aria-label="Main">
       <a href="services.html">Services</a>
       <a href="book.html">Book</a>
-      <a href="gallery.html">Gallery</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
       <div class="account-menu" data-account-menu>
@@ -38,14 +37,13 @@
 
   <main class="page-dark">
     <div class="page-hero page-hero--dark">
-      <h1 data-bbd="login.heroH1">Log in</h1>
-      <p data-bbd="login.heroP">Access your dashboard with the email and password you used to sign up.</p>
+      <h1>Log in</h1>
+      <p>Access your dashboard with the email and password you used to sign up.</p>
     </div>
 
     <div class="content-block content-block--dark">
       <div class="auth-page-card">
         <h2>Welcome back</h2>
-        <p class="auth-page-card__lede">Uses Supabase Auth. Configure <code style="font-size:0.85em;opacity:0.85;">js/supabase-config.js</code> with your project URL and anon key.</p>
         <div id="login-error" class="auth-alert auth-alert--error" role="alert" hidden></div>
         <form id="login-form" class="auth-page-form" action="#" method="post" novalidate>
           <label for="login-email">Email or username</label>
@@ -70,6 +68,10 @@
           <div id="auth-forgot-success" class="auth-alert auth-alert--success" role="status" hidden></div>
         </div>
         <p class="auth-page-footer">No account yet? <a href="signup.html">Create one</a></p>
+        <p class="auth-provider-note" aria-label="Secured with Supabase">
+          <img class="auth-provider-note__logo" src="logos/supabase-mark.svg" alt="" width="14" height="14" decoding="async">
+          <span>Secured with Supabase</span>
+        </p>
       </div>
     </div>
   </main>
@@ -137,7 +139,6 @@
         <div class="footer-nav__col">
           <a href="index.html">Home <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
           <a href="services.html">Services <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
-          <a href="gallery.html">Gallery <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
         </div>
         <div class="footer-nav__col">
           <a href="about.html">About <svg class="footer-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
@@ -164,5 +165,6 @@
   <script type="module" src="js/auth-login.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/site-settings.js"></script>
+  <script type="module" src="js/site-settings-remote.js"></script>
 </body>
 </html>

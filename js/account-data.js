@@ -49,20 +49,31 @@ function todayISO() {
   );
 }
 
+/**
+ * Prefer earliest future (or today) non-cancelled booking; if none (e.g. past date picked),
+ * show the most recently submitted active request so the card is never empty when rows exist.
+ */
 function pickNextUpcomingBooking(bookings) {
   var iso = todayISO();
-  var pending = (bookings || []).filter(function (b) {
-    if (!b || !b.booking_date) return false;
-    if (b.status === "cancelled") return false;
+  var active = (bookings || []).filter(function (b) {
+    return b && b.booking_date && b.status !== "cancelled";
+  });
+  var future = active.filter(function (b) {
     return String(b.booking_date) >= iso;
   });
-  pending.sort(function (a, b) {
+  future.sort(function (a, b) {
     if (a.booking_date !== b.booking_date) {
       return a.booking_date < b.booking_date ? -1 : 1;
     }
     return String(a.booking_time || "").localeCompare(String(b.booking_time || ""));
   });
-  return pending[0] || null;
+  if (future[0]) return future[0];
+  active.sort(function (a, b) {
+    var ca = a.created_at ? new Date(a.created_at).getTime() : 0;
+    var cb = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return cb - ca;
+  });
+  return active[0] || null;
 }
 
 function setText(id, text) {
@@ -265,6 +276,7 @@ async function load() {
   currentUserId = userId;
 
   var userEmail = user.email ? String(user.email).trim() : "";
+  var userEmailLower = userEmail ? userEmail.toLowerCase() : "";
 
   var profileQ = supabase
     .from("profiles")
@@ -294,17 +306,22 @@ async function load() {
 
   var bookingsByUserQ = supabase
     .from("bookings")
-    .select("id,reference_code,booking_date,booking_time,service_package,status,cust_email")
+    .select(
+      "id,reference_code,booking_date,booking_time,service_package,status,cust_email,created_at"
+    )
     .eq("user_id", userId)
-    .limit(80);
+    .limit(120);
 
-  var bookingsByEmailQ = userEmail
-    ? supabase
-        .from("bookings")
-        .select("id,reference_code,booking_date,booking_time,service_package,status,cust_email")
-        .eq("cust_email", userEmail)
-        .limit(80)
-    : Promise.resolve({ data: [], error: null });
+  var bookingsByEmailQ =
+    userEmailLower
+      ? supabase
+          .from("bookings")
+          .select(
+            "id,reference_code,booking_date,booking_time,service_package,status,cust_email,created_at"
+          )
+          .ilike("cust_email", userEmailLower)
+          .limit(120)
+      : Promise.resolve({ data: [], error: null });
 
   var results = await Promise.all([
     profileQ,
@@ -328,9 +345,16 @@ async function load() {
   }
 
   if (bookingsUser.error || bookingsEmail.error) {
-    console.warn(
-      "[account-data] bookings query (run supabase/bookings-reference-rls.sql if missing column/policy)",
+    console.error(
+      "[account-data] bookings query",
       bookingsUser.error || bookingsEmail.error
+    );
+    showToast(
+      "Could not load your bookings: " +
+        ((bookingsUser.error || bookingsEmail.error).message ||
+          "check Supabase RLS and bookings table.") +
+        " Run supabase/bookings-reference-rls.sql if you have not.",
+      "error"
     );
   }
 
@@ -365,10 +389,15 @@ async function load() {
             : nextBk.service_package || "Service";
     var whenLine = fmtDate(nextBk.booking_date);
     if (nextBk.booking_time) whenLine += " · " + fmtTime12(nextBk.booking_time);
+    var iso = todayISO();
+    var isPastDate = String(nextBk.booking_date) < iso;
     setText("acct-next-appointment-label", whenLine);
     setText(
       "acct-next-appointment-meta",
-      "Ref " +
+      (isPastDate
+        ? "Date in the past — confirmation still pending. "
+        : "") +
+        "Ref " +
         (nextBk.reference_code || "—") +
         " · " +
         pkg +

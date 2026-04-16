@@ -47,7 +47,7 @@ if (form) {
     showError("");
 
     if (!isSupabaseConfigured()) {
-      showError("Supabase is not configured. Paste your URL and anon key into js/supabase-config.js.");
+      showError("Account sign-up is temporarily unavailable. Please try again later.");
       return;
     }
 

@@ -48,13 +48,10 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     services: "fa-wand-magic-sparkles",
     book: "fa-calendar-days",
     bookflow: "fa-clipboard-check",
-    gallery: "fa-images",
     contact: "fa-envelope-open-text",
     about: "fa-book-open",
     subscriptions: "fa-ticket",
     account: "fa-id-card",
-    login: "fa-key",
-    signup: "fa-user-plus",
     terms: "fa-file-contract",
     privacy: "fa-shield-halved",
     admin: "fa-sliders",
@@ -103,14 +100,6 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       ],
     },
     {
-      id: "gallery",
-      title: "Gallery",
-      fields: [
-        { key: "gallery.heroH1", label: "Page title", multiline: false },
-        { key: "gallery.heroP", label: "Page subtitle", multiline: true },
-      ],
-    },
-    {
       id: "contact",
       title: "Contact",
       fields: [
@@ -141,22 +130,6 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       fields: [
         { key: "account.heroH1", label: "Page title", multiline: false },
         { key: "account.heroP", label: "Page subtitle", multiline: true },
-      ],
-    },
-    {
-      id: "login",
-      title: "Login",
-      fields: [
-        { key: "login.heroH1", label: "Page title", multiline: false },
-        { key: "login.heroP", label: "Page subtitle", multiline: true },
-      ],
-    },
-    {
-      id: "signup",
-      title: "Join",
-      fields: [
-        { key: "signup.heroH1", label: "Page title", multiline: false },
-        { key: "signup.heroP", label: "Page subtitle", multiline: true },
       ],
     },
     {
@@ -211,8 +184,6 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     "bookflow.heroH1": "Book your appointment",
     "bookflow.heroP":
       "Choose your package, vehicle type, add-ons, and a preferred time — then how you’d like to complete your request.",
-    "gallery.heroH1": "Gallery",
-    "gallery.heroP": "Replace placeholders with your photos — same filenames or update the paths below.",
     "contact.heroH1": "Contact",
     "contact.heroP": "Book a visit or ask a question — we reply as soon as we can.",
     "about.heroH1": "About us",
@@ -225,11 +196,6 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     "account.heroH1": "Account",
     "account.heroP":
       "Signed-in view (Supabase Auth). Dashboard copy below is still sample data until you connect your database.",
-    "login.heroH1": "Log in",
-    "login.heroP": "Access your dashboard with the email and password you used to sign up.",
-    "signup.heroH1": "Create account",
-    "signup.heroP":
-      "Sign up with email. If email confirmation is on in Supabase, check your inbox before logging in.",
     "terms.heroH1": "Terms of Service",
     "terms.heroP": "Last updated: April 6, 2026",
     "privacy.heroH1": "Privacy Policy",
@@ -423,10 +389,28 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     }
   }
 
-  function writeSiteSettings(nextSettings) {
+  async function syncSiteSettingsToSupabase(merged) {
+    if (!isSupabaseConfigured()) return;
+    const allowed = await hasAllowedSupabaseAdminSession();
+    if (!allowed) return;
+    const { error } = await supabase.from("site_settings").upsert(
+      { id: "default", settings: merged, updated_at: new Date().toISOString() },
+      { onConflict: "id" }
+    );
+    if (error) {
+      console.error("[admin] site_settings sync failed", error);
+      adminToast(
+        "Saved in this browser, but cloud sync failed. Run supabase/site-settings.sql in Supabase and check RLS.",
+        "error"
+      );
+    }
+  }
+
+  async function writeSiteSettings(nextSettings) {
     const current = readSiteSettings();
     const merged = { ...current, ...nextSettings };
     store.setItem(SITE_SETTINGS_KEY, JSON.stringify(merged));
+    await syncSiteSettingsToSupabase(merged);
   }
 
   function sanitizeBlocks(data) {
@@ -641,7 +625,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     });
   }
 
-  function saveOneGroup(groupId) {
+  async function saveOneGroup(groupId) {
     const groupDef = PAGE_EDIT_GROUPS.find((g) => g.id === groupId);
     if (!groupDef || !pageEditsRoot) return;
     const det = pageEditsRoot.querySelector(`details[data-page-group="${groupId}"]`);
@@ -652,7 +636,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       const input = det.querySelector(`[data-page-edit-key="${field.key}"]`);
       if (input) mergedEdits[field.key] = String(input.value || "").trim();
     });
-    writeSiteSettings({
+    await writeSiteSettings({
       pageEdits: mergedEdits,
       indexOffer: {
         heading: mergedEdits["index.offerHeading"] || "",
@@ -779,7 +763,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       btnSave.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        saveOneGroup(group.id);
+        void saveOneGroup(group.id);
       });
 
       actions.appendChild(btnEdit);
@@ -990,7 +974,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
   }
 
   if (savePricingBtn) {
-    savePricingBtn.addEventListener("click", () => {
+    savePricingBtn.addEventListener("click", async () => {
       const essential = Number(priceEssential?.value || 0);
       const complete = Number(priceComplete?.value || 0);
       const signature = Number(priceSignature?.value || 0);
@@ -1008,7 +992,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
           .map((s) => s.trim())
           .filter(Boolean);
       }
-      writeSiteSettings({
+      await writeSiteSettings({
         pricing: { essential, complete, signature },
         promo: {
           ...prevPromo,
@@ -1023,7 +1007,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
           signature: parseBulletLines(packageBulletsSignature),
         },
       });
-      adminToast("Pricing, promo, and package bullets saved.", "success");
+      adminToast("Pricing, promo, and package bullets saved (local + cloud).", "success");
     });
   }
 
