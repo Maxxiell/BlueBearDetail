@@ -26,7 +26,8 @@ create table if not exists public.bookings (
   cust_notes text,
   checkout_method text not null default 'book',
   pay_inspection_ack boolean not null default false,
-  summary_text text not null default ''
+  summary_text text not null default '',
+  reference_code text
 );
 
 create index if not exists idx_bookings_created_at on public.bookings (created_at desc);

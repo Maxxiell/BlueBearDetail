@@ -13,6 +13,17 @@ function newBookingId() {
   });
 }
 
+/** 8-char public reference (no I, O, 0, 1). Stored in bookings.reference_code. */
+function newReferenceCode() {
+  var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var s = "";
+  var i;
+  for (i = 0; i < 8; i++) {
+    s += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return s;
+}
+
 /**
  * Insert a "Book appointment" request into public.bookings.
  * Returns { id } on success, { error } on failure, or { skipped: true } if Supabase URL/key not set.
@@ -50,9 +61,11 @@ async function submitBookAppointmentInner(form, summaryText) {
   } catch (_e) {}
 
   var bookingId = newBookingId();
+  var referenceCode = newReferenceCode();
 
   var row = {
     id: bookingId,
+    reference_code: referenceCode,
     user_id: userId,
     status: "book_requested",
     service_package: String(fd.get("service") || ""),
@@ -107,5 +120,5 @@ async function submitBookAppointmentInner(form, summaryText) {
     console.warn("[booking-submit-supabase] send-booking-email", fnErr);
   }
 
-  return { id: bookingId, emailSent: emailSent };
+  return { id: bookingId, referenceCode: referenceCode, emailSent: emailSent };
 }

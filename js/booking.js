@@ -1076,8 +1076,14 @@
           );
           return;
         }
-        var ref = result.id ? String(result.id) : "";
-        var shortRef = ref.length >= 8 ? ref.slice(0, 8) : ref;
+        var shortRef = result.referenceCode
+          ? String(result.referenceCode)
+          : result.id
+            ? String(result.id)
+                .replace(/-/g, "")
+                .slice(0, 8)
+                .toUpperCase()
+            : "";
         var emailLine =
           result.emailSent === true
             ? " We sent a confirmation email to the address you provided."

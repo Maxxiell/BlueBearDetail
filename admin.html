@@ -286,6 +286,38 @@
           </div>
         </section>
 
+        <section class="admin-section" aria-labelledby="admin-bookings-heading">
+          <header class="admin-section__header">
+            <span class="admin-section__icon" aria-hidden="true"><i class="fa-solid fa-clipboard-list"></i></span>
+            <div class="admin-section__titles">
+              <h2 id="admin-bookings-heading" class="admin-section__title">Booking requests</h2>
+              <p class="admin-section__lead">Live submissions from <strong>book-flow</strong> (Supabase). Reference codes match customer confirmations.</p>
+            </div>
+          </header>
+          <div class="admin-section__body">
+            <div class="admin-data-table-wrap admin-data-table-wrap--ledger">
+              <table class="admin-data-table" aria-label="Booking requests">
+                <thead>
+                  <tr>
+                    <th scope="col">Ref</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Package</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-bookings-body">
+                  <tr><td colspan="9" class="admin-empty">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
   </main>

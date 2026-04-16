@@ -9,10 +9,6 @@ const corsHeaders: Record<string, string> = {
 /** Only send for rows created recently (reduces abuse if the endpoint is called without JWT). */
 const MAX_AGE_MS = 15 * 60 * 1000;
 
-/** Public absolute URL to horizontal logo (must be https, same host as production site). Override: BOOKING_EMAIL_LOGO_URL */
-const DEFAULT_BOOKING_EMAIL_LOGO_URL =
-  "https://bluebeardetail.com/logos/BBD-Site-Logo-horizontal.png";
-
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -63,7 +59,7 @@ serve(async (req: Request) => {
     const { data: row, error: fetchErr } = await admin
       .from("bookings")
       .select(
-        "id, created_at, cust_email, cust_first_name, cust_last_name, summary_text, booking_date, booking_time, service_package, vehicle_type, addons"
+        "id, reference_code, created_at, cust_email, cust_first_name, cust_last_name, summary_text, booking_date, booking_time, service_package, vehicle_type, addons"
       )
       .eq("id", bookingId)
       .maybeSingle();
@@ -93,7 +89,12 @@ serve(async (req: Request) => {
     }
 
     const name = [row.cust_first_name, row.cust_last_name].filter(Boolean).join(" ").trim() || "there";
-    const refShort = String(row.id || bookingId).replace(/-/g, "").slice(0, 8).toUpperCase();
+    const refShort =
+      (typeof row.reference_code === "string" && row.reference_code.trim()) ||
+      String(row.id || bookingId)
+        .replace(/-/g, "")
+        .slice(0, 8)
+        .toUpperCase();
     const subject = `We received your booking request · Blue Bear Detail`;
 
     const textBody = buildBookingEmailText({
@@ -107,7 +108,10 @@ serve(async (req: Request) => {
       addons: row.addons,
     });
 
-    const logoUrl = Deno.env.get("BOOKING_EMAIL_LOGO_URL") ?? DEFAULT_BOOKING_EMAIL_LOGO_URL;
+    /** GitHub Pages + custom domain fallbacks so the logo loads when the site is live */
+    const logoUrl =
+      Deno.env.get("BOOKING_EMAIL_LOGO_URL") ??
+      "https://maxxiell.github.io/BlueBearDetail/logos/BBD-Site-Logo-horizontal.png";
 
     const htmlBody = buildBookingEmailHtml({
       name,
@@ -265,40 +269,41 @@ function buildBookingEmailText(f: BookingEmailFields): string {
   return lines.join("\n");
 }
 
-/** Table-based HTML for email clients (inline styles). White canvas + dark footer; brand #02396b */
+/** Dark-themed HTML for email: black canvas, white logo bar, white “full request” block, brand #02396b */
 function buildBookingEmailHtml(f: BookingEmailFields): string {
   const brand = "#02396b";
-  const muted = "#5c6370";
-  const border = "#e2e5eb";
+  const cardBg = "#0a0a0a";
+  const cardBorder = "#1e293b";
+  const text = "#e5e7eb";
+  const muted = "#9ca3af";
   const white = "#ffffff";
   const black = "#000000";
+  const rowBg = "#111827";
 
   const summaryBlock = escapeHtml(f.summaryText || "").replace(/\r\n/g, "\n").replace(/\n/g, "<br/>");
   const logoSrc = escapeHtml(f.logoUrl);
 
   const rows: string[] = [];
   if (f.bookingDate) {
-    rows.push(
-      rowHtml("Preferred date", escapeHtml(formatDateUs(f.bookingDate))),
-    );
+    rows.push(rowHtmlDark("Preferred date", escapeHtml(formatDateUs(f.bookingDate)), rowBg));
   }
   if (f.bookingTime) {
-    rows.push(rowHtml("Preferred start time", escapeHtml(formatTime12h(f.bookingTime))));
+    rows.push(rowHtmlDark("Preferred start time", escapeHtml(formatTime12h(f.bookingTime)), rowBg));
   }
   if (f.servicePackage) {
-    rows.push(rowHtml("Service package", escapeHtml(formatService(f.servicePackage))));
+    rows.push(rowHtmlDark("Service package", escapeHtml(formatService(f.servicePackage)), rowBg));
   }
   if (f.vehicleType) {
-    rows.push(rowHtml("Vehicle type", escapeHtml(formatVehicle(f.vehicleType))));
+    rows.push(rowHtmlDark("Vehicle type", escapeHtml(formatVehicle(f.vehicleType)), rowBg));
   }
   const addStr = addonsLine(f.addons);
   if (addStr && addStr !== "None") {
-    rows.push(rowHtml("Add-ons", escapeHtml(addStr)));
+    rows.push(rowHtmlDark("Add-ons", escapeHtml(addStr), rowBg));
   }
 
   const detailsTable = rows.length
     ? `
-  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" bgcolor="${white}" style="border-collapse:collapse;margin:0 0 24px 0;border:1px solid ${border};border-radius:8px;overflow:hidden;background-color:${white} !important;">
+  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 0 22px 0;border:1px solid ${cardBorder};border-radius:8px;overflow:hidden;">
     <tbody>
       ${rows.join("\n")}
     </tbody>
@@ -306,56 +311,55 @@ function buildBookingEmailHtml(f: BookingEmailFields): string {
     : "";
 
   return `<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width"/>
-  <meta name="color-scheme" content="light only"/>
-  <meta name="supported-color-schemes" content="light"/>
+  <meta name="color-scheme" content="dark light"/>
+  <meta name="supported-color-schemes" content="dark light"/>
   <title>Booking received</title>
-  <!--[if mso]><style type="text/css">table, td { border-collapse: collapse; }</style><![endif]-->
 </head>
-<body bgcolor="${white}" style="margin:0;padding:0;background-color:${white} !important;color:#1a1f2e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${white}" style="border-collapse:collapse;background-color:${white} !important;mso-line-height-rule:exactly;">
+<body bgcolor="${black}" style="margin:0;padding:0;background-color:${black} !important;color:${text};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${black}" style="border-collapse:collapse;background-color:${black} !important;">
     <tr>
-      <td align="center" bgcolor="${white}" style="background-color:${white} !important;padding:24px 12px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${white}" style="border-collapse:collapse;max-width:600px;background-color:${white} !important;border-radius:12px;overflow:hidden;border:1px solid ${border};">
+      <td align="center" bgcolor="${black}" style="background-color:${black} !important;padding:28px 14px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;max-width:600px;background-color:${cardBg} !important;border-radius:14px;overflow:hidden;border:1px solid ${cardBorder};">
           <tr>
-            <td align="center" bgcolor="${white}" style="background-color:${white} !important;padding:28px 32px 12px 32px;">
+            <td align="center" bgcolor="${white}" style="background-color:${white} !important;padding:26px 28px 22px 28px;">
               <a href="https://bluebeardetail.com" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-                <img src="${logoSrc}" alt="Blue Bear Detail" width="220" height="48" border="0" style="display:block;margin:0 auto;max-width:100%;width:220px;height:auto;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"/>
+                <img src="${logoSrc}" alt="Blue Bear Detail" width="220" height="48" border="0" style="display:block;margin:0 auto;max-width:100%;width:220px;height:auto;border:0;outline:none;-ms-interpolation-mode:bicubic;"/>
               </a>
             </td>
           </tr>
           <tr>
-            <td align="center" bgcolor="${white}" style="background-color:${white} !important;padding:8px 32px 24px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-              <h1 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:${brand};line-height:1.25;">Booking request received</h1>
-              <p style="margin:0;font-size:13px;color:${muted};letter-spacing:0.04em;">Ref <strong style="color:${brand};font-weight:700;letter-spacing:0.08em;">${escapeHtml(f.refShort)}</strong></p>
+            <td align="center" style="padding:20px 28px 8px 28px;background-color:${cardBg} !important;">
+              <h1 style="margin:0 0 12px 0;font-size:21px;font-weight:700;color:${white};line-height:1.25;">Booking request received</h1>
+              <p style="margin:0;font-size:13px;color:${muted};letter-spacing:0.06em;">Reference <span style="display:inline-block;padding:6px 14px;border-radius:8px;background-color:${black};color:${brand};font-weight:800;letter-spacing:0.12em;border:1px solid ${brand};">${escapeHtml(f.refShort)}</span></p>
             </td>
           </tr>
           <tr>
-            <td bgcolor="${white}" style="background-color:${white} !important;padding:0 32px 8px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-              <p style="margin:0 0 16px 0;font-size:16px;line-height:1.55;color:#1a1f2e;">Hi ${escapeHtml(f.name)},</p>
-              <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:${muted};">Thanks for choosing us for your mobile detailing. Below is a copy of what you submitted. We’ll contact you to confirm your appointment.</p>
+            <td style="padding:0 28px 8px 28px;background-color:${cardBg} !important;">
+              <p style="margin:0 0 14px 0;font-size:16px;line-height:1.55;color:${text};">Hi ${escapeHtml(f.name)},</p>
+              <p style="margin:0 0 18px 0;font-size:14px;line-height:1.65;color:${muted};">Thanks for choosing Blue Bear Detail. Below is a copy of what you submitted. We’ll contact you to confirm your appointment.</p>
               ${detailsTable}
-              <p style="margin:0 0 10px 0;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${brand};">Full request</p>
-              <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 0 8px 0;">
+              <p style="margin:0 0 10px 0;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${brand};">Full request</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 0 12px 0;">
                 <tr>
-                  <td bgcolor="${white}" style="background-color:${white} !important;border:1px solid ${border};border-left:4px solid ${brand};border-radius:8px;padding:18px 20px;font-size:13px;line-height:1.65;color:#1a1f2e;font-family:'SF Mono',Consolas,'Liberation Mono',Menlo,monospace;">${summaryBlock}</td>
+                  <td bgcolor="${white}" style="background-color:${white} !important;border:1px solid #d1d5db;border-left:5px solid ${brand};border-radius:10px;padding:18px 20px;font-size:13px;line-height:1.65;color:#111827;font-family:Consolas,'SF Mono','Liberation Mono',Menlo,monospace;">${summaryBlock}</td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
-            <td bgcolor="${white}" style="background-color:${white} !important;padding:8px 32px 28px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+            <td style="padding:6px 28px 22px 28px;background-color:${cardBg} !important;">
               <p style="margin:0;font-size:14px;line-height:1.6;color:${muted};">Questions? Reply to this email or visit <a href="https://bluebeardetail.com" style="color:${brand};font-weight:700;text-decoration:underline;">bluebeardetail.com</a>.</p>
             </td>
           </tr>
           <tr>
-            <td bgcolor="${black}" style="background-color:${black} !important;padding:24px 32px;text-align:center;border-top:3px solid ${brand};">
-              <p style="margin:0 0 6px 0;font-size:14px;font-weight:700;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Blue Bear Detail</p>
-              <p style="margin:0 0 14px 0;font-size:12px;color:rgba(255,255,255,0.75);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Mobile auto detailing · Denver area</p>
-              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.55);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.45;">This message was sent because you submitted a booking on our website.</p>
+            <td bgcolor="${black}" style="background-color:${black} !important;padding:22px 28px;text-align:center;border-top:3px solid ${brand};">
+              <p style="margin:0 0 6px 0;font-size:14px;font-weight:700;color:#ffffff;">Blue Bear Detail</p>
+              <p style="margin:0 0 12px 0;font-size:12px;color:rgba(255,255,255,0.72);">Mobile auto detailing · Denver area</p>
+              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.5);line-height:1.45;">This message was sent because you submitted a booking on our website.</p>
             </td>
           </tr>
         </table>
@@ -366,9 +370,9 @@ function buildBookingEmailHtml(f: BookingEmailFields): string {
 </html>`;
 }
 
-function rowHtml(label: string, value: string): string {
+function rowHtmlDark(label: string, value: string, bg: string): string {
   return `<tr>
-    <td bgcolor="#ffffff" style="padding:12px 16px;border-bottom:1px solid #ebeef4;font-size:12px;font-weight:600;color:#6b7280;width:38%;vertical-align:top;background-color:#ffffff !important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${label}</td>
-    <td bgcolor="#ffffff" style="padding:12px 16px;border-bottom:1px solid #ebeef4;font-size:14px;color:#1a1f2e;vertical-align:top;background-color:#ffffff !important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${value}</td>
+    <td bgcolor="${bg}" style="padding:11px 14px;border-bottom:1px solid #374151;font-size:11px;font-weight:700;color:${muted};width:36%;vertical-align:top;text-transform:uppercase;letter-spacing:0.04em;">${label}</td>
+    <td bgcolor="${bg}" style="padding:11px 14px;border-bottom:1px solid #374151;font-size:14px;color:#f3f4f6;vertical-align:top;">${value}</td>
   </tr>`;
 }

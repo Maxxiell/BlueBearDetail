@@ -335,6 +335,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
   const balanceCreditInput = document.getElementById("admin-balance-credit");
   const balancePointsInput = document.getElementById("admin-balance-points");
   const balanceApplyBtn = document.getElementById("admin-balance-apply");
+  const adminBookingsBody = document.getElementById("admin-bookings-body");
 
   const dayInput = document.getElementById("block-day-date");
   const dayAddBtn = document.getElementById("block-day-add");
@@ -942,6 +943,52 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     return d.innerHTML;
   }
 
+  async function loadBookingsAdmin() {
+    if (!adminBookingsBody) return;
+    if (!isSupabaseConfigured()) {
+      adminBookingsBody.innerHTML =
+        '<tr><td colspan="9" class="admin-empty">Connect Supabase in <code>js/supabase-config.js</code> to load bookings.</td></tr>';
+      return;
+    }
+    const { data, error } = await supabase
+      .from("bookings")
+      .select(
+        "reference_code,created_at,booking_date,booking_time,cust_first_name,cust_last_name,cust_email,cust_phone,service_package,status"
+      )
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) {
+      adminBookingsBody.innerHTML = `<tr><td colspan="9" class="admin-empty">Could not load bookings: ${escapeHtml(
+        error.message || "error"
+      )}. Run <code>supabase/bookings-reference-rls.sql</code> in the SQL editor if this is a new column/policy.</td></tr>`;
+      return;
+    }
+    const list = data || [];
+    if (!list.length) {
+      adminBookingsBody.innerHTML =
+        '<tr><td colspan="9" class="admin-empty">No booking requests yet.</td></tr>';
+      return;
+    }
+    adminBookingsBody.innerHTML = list
+      .map((r) => {
+        const ref = escapeHtml(r.reference_code || "—");
+        const created = r.created_at
+          ? escapeHtml(new Date(r.created_at).toLocaleString())
+          : "—";
+        const bd = escapeHtml(r.booking_date || "—");
+        const bt = escapeHtml(r.booking_time || "—");
+        const name = escapeHtml(
+          [r.cust_first_name, r.cust_last_name].filter(Boolean).join(" ").trim() || "—"
+        );
+        const em = escapeHtml(r.cust_email || "");
+        const ph = escapeHtml(r.cust_phone || "—");
+        const pkg = escapeHtml(r.service_package || "—");
+        const st = escapeHtml(r.status || "—");
+        return `<tr><td>${ref}</td><td>${created}</td><td>${bd}</td><td>${bt}</td><td>${name}</td><td>${em}</td><td>${ph}</td><td>${pkg}</td><td>${st}</td></tr>`;
+      })
+      .join("");
+  }
+
   if (savePricingBtn) {
     savePricingBtn.addEventListener("click", () => {
       const essential = Number(priceEssential?.value || 0);
@@ -1051,4 +1098,12 @@ import { isSupabaseConfigured } from "./supabase-config.js";
   renderDemoTables();
 
   render();
+
+  loadBookingsAdmin().catch((e) => {
+    console.error("[admin] loadBookingsAdmin", e);
+    if (adminBookingsBody) {
+      adminBookingsBody.innerHTML =
+        '<tr><td colspan="9" class="admin-empty">Could not load bookings.</td></tr>';
+    }
+  });
 })();

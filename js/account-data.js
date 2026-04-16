@@ -14,6 +14,57 @@ function fmtDate(raw) {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function fmtTime12(iso) {
+  if (!iso || !/^\d{2}:\d{2}$/.test(String(iso))) return iso ? String(iso) : "";
+  var p = String(iso).split(":");
+  var h = parseInt(p[0], 10);
+  var m = p[1];
+  var ampm = h >= 12 ? "PM" : "AM";
+  var h12 = h % 12;
+  if (h12 === 0) h12 = 12;
+  return h12 + ":" + m + " " + ampm;
+}
+
+function mergeBookingsById(a, b) {
+  var map = {};
+  (a || []).forEach(function (r) {
+    if (r && r.id) map[r.id] = r;
+  });
+  (b || []).forEach(function (r) {
+    if (r && r.id) map[r.id] = r;
+  });
+  return Object.keys(map).map(function (k) {
+    return map[k];
+  });
+}
+
+function todayISO() {
+  var t = new Date();
+  return (
+    t.getFullYear() +
+    "-" +
+    String(t.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(t.getDate()).padStart(2, "0")
+  );
+}
+
+function pickNextUpcomingBooking(bookings) {
+  var iso = todayISO();
+  var pending = (bookings || []).filter(function (b) {
+    if (!b || !b.booking_date) return false;
+    if (b.status === "cancelled") return false;
+    return String(b.booking_date) >= iso;
+  });
+  pending.sort(function (a, b) {
+    if (a.booking_date !== b.booking_date) {
+      return a.booking_date < b.booking_date ? -1 : 1;
+    }
+    return String(a.booking_time || "").localeCompare(String(b.booking_time || ""));
+  });
+  return pending[0] || null;
+}
+
 function setText(id, text) {
   var el = document.getElementById(id);
   if (el) el.textContent = text;
@@ -213,6 +264,8 @@ async function load() {
   var userId = user.id;
   currentUserId = userId;
 
+  var userEmail = user.email ? String(user.email).trim() : "";
+
   var profileQ = supabase
     .from("profiles")
     .select("first_name,last_name")
@@ -239,16 +292,46 @@ async function load() {
     .order("happened_on", { ascending: false })
     .limit(12);
 
-  var results = await Promise.all([profileQ, dashQ, vehiclesQ, activityQ]);
+  var bookingsByUserQ = supabase
+    .from("bookings")
+    .select("id,reference_code,booking_date,booking_time,service_package,status,cust_email")
+    .eq("user_id", userId)
+    .limit(80);
+
+  var bookingsByEmailQ = userEmail
+    ? supabase
+        .from("bookings")
+        .select("id,reference_code,booking_date,booking_time,service_package,status,cust_email")
+        .eq("cust_email", userEmail)
+        .limit(80)
+    : Promise.resolve({ data: [], error: null });
+
+  var results = await Promise.all([
+    profileQ,
+    dashQ,
+    vehiclesQ,
+    activityQ,
+    bookingsByUserQ,
+    bookingsByEmailQ,
+  ]);
   var profile = results[0];
   var dash = results[1];
   var vehicles = results[2];
   var activity = results[3];
+  var bookingsUser = results[4];
+  var bookingsEmail = results[5];
 
   if (profile.error || dash.error || vehicles.error || activity.error) {
     console.error("[account-data] query error", profile.error || dash.error || vehicles.error || activity.error);
     showToast("Could not load user info.", "error");
     return;
+  }
+
+  if (bookingsUser.error || bookingsEmail.error) {
+    console.warn(
+      "[account-data] bookings query (run supabase/bookings-reference-rls.sql if missing column/policy)",
+      bookingsUser.error || bookingsEmail.error
+    );
   }
 
   var p = profile.data || {};
@@ -265,8 +348,46 @@ async function load() {
   setText("acct-points-meta", Number(d.reward_points || 0) > 0 ? "Points available for future rewards." : "No reward points yet.");
   setText("acct-last-service-title", d.last_service_title && String(d.last_service_title).trim() ? String(d.last_service_title) : "No completed service yet");
   setText("acct-last-service-meta", d.last_service_meta && String(d.last_service_meta).trim() ? String(d.last_service_meta) : "When your first appointment is completed, it will appear here.");
-  setText("acct-next-appointment-label", d.next_appointment_label && String(d.next_appointment_label).trim() ? String(d.next_appointment_label) : "—");
-  setText("acct-next-appointment-meta", d.next_appointment_meta && String(d.next_appointment_meta).trim() ? String(d.next_appointment_meta) : "No upcoming appointment on file.");
+
+  var mergedBookings = mergeBookingsById(
+    bookingsUser.data || [],
+    bookingsEmail.data || []
+  );
+  var nextBk = pickNextUpcomingBooking(mergedBookings);
+  if (nextBk) {
+    var pkg =
+      nextBk.service_package === "essential"
+        ? "Essential"
+        : nextBk.service_package === "complete"
+          ? "Complete"
+          : nextBk.service_package === "signature"
+            ? "Signature"
+            : nextBk.service_package || "Service";
+    var whenLine = fmtDate(nextBk.booking_date);
+    if (nextBk.booking_time) whenLine += " · " + fmtTime12(nextBk.booking_time);
+    setText("acct-next-appointment-label", whenLine);
+    setText(
+      "acct-next-appointment-meta",
+      "Ref " +
+        (nextBk.reference_code || "—") +
+        " · " +
+        pkg +
+        " — we’ll confirm this request by phone or email."
+    );
+  } else {
+    setText(
+      "acct-next-appointment-label",
+      d.next_appointment_label && String(d.next_appointment_label).trim()
+        ? String(d.next_appointment_label)
+        : "—"
+    );
+    setText(
+      "acct-next-appointment-meta",
+      d.next_appointment_meta && String(d.next_appointment_meta).trim()
+        ? String(d.next_appointment_meta)
+        : "No upcoming appointment on file. Book from the site and it will show here when the date is still ahead."
+    );
+  }
 
   var vehicleRows = Array.isArray(vehicles.data) ? vehicles.data : [];
   currentVehicles = vehicleRows.slice();
