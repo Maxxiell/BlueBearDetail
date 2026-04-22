@@ -623,7 +623,6 @@
     if (step === 1) {
       var s = form.querySelector('input[name="service"]:checked');
       if (!s) return "Please select a service package.";
-      if (s.value === "signature") return "Signature is marked coming soon and is not bookable yet.";
       return "";
     }
     if (step === 2) {
@@ -858,7 +857,7 @@
 
       if (data.checkoutMethod === "pay") {
         var payMethod = form.querySelector('input[name="checkoutMethod"][value="pay"]');
-        if (payMethod) payMethod.checked = true;
+        if (payMethod && !payMethod.disabled) payMethod.checked = true;
       } else {
         var bookMethod = form.querySelector('input[name="checkoutMethod"][value="book"]');
         if (bookMethod) bookMethod.checked = true;
@@ -993,7 +992,14 @@
     if (bp) bp.hidden = true;
     if (errEl) errEl.hidden = true;
     donePanel.hidden = false;
+    refreshLucideIcons();
     donePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function refreshLucideIcons() {
+    if (typeof lucide !== "undefined" && lucide && typeof lucide.createIcons === "function") {
+      lucide.createIcons({ attrs: { "stroke-width": 2 } });
+    }
   }
 
   btnNext.addEventListener("click", function () {
@@ -1157,7 +1163,7 @@
     }
   });
 
-  function applyServiceFromUrl() {
+  function applyServiceFromUrl(hadSavedState) {
     try {
       var p = new URLSearchParams(window.location.search);
       var s = p.get("service");
@@ -1166,14 +1172,21 @@
         (s === "essential" || s === "complete")
       ) {
         var r = form.querySelector('input[name="service"][value="' + s + '"]');
-        if (r) r.checked = true;
+        if (r) {
+          r.checked = true;
+          if (!hadSavedState && currentStep === 1) {
+            showStep(2);
+          }
+        }
         saveState();
       }
     } catch (e) {}
   }
 
+  var hadSavedState = false;
   try {
     if (sessionStorage.getItem(STORAGE_KEY)) {
+      hadSavedState = true;
       restoreState();
     } else {
       showStep(1);
@@ -1181,7 +1194,7 @@
   } catch (e) {
     showStep(1);
   }
-  applyServiceFromUrl();
+  applyServiceFromUrl(hadSavedState);
 
   /** Stain Spot Treatment only — opened via info button on book-flow */
   var addonInfoHtml = {
@@ -1219,5 +1232,56 @@
     });
   }
 
+  function initServiceInfoDialog() {
+    var dlg = document.getElementById("booking-service-info-dialog");
+    var titleEl = document.getElementById("booking-service-info-title");
+    var bodyEl = document.getElementById("booking-service-info-body");
+    var closeBtn = document.getElementById("booking-service-info-close");
+    if (!dlg || !titleEl || !bodyEl) return;
+
+    var info = {
+      essential:
+        "<p><strong>Best fit</strong> Daily drivers that stay relatively clean—quick exterior refresh and light interior tidy between deeper details.</p>" +
+        "<p><strong>Vehicle condition</strong> Works best with light dust, routine dirt, and manageable interiors. Heavy mud, thick pet hair, stains, smoke odor, or long-neglected cabins usually need more time or a higher package.</p>" +
+        "<p><strong>Pricing</strong> Package prices are <strong>starting points</strong>. We confirm scope on site; if your vehicle needs extra labor or products, we’ll discuss an updated quote before work begins.</p>",
+      complete:
+        "<p><strong>Best fit</strong> Customers who want a full interior shampoo or steam treatment <strong>and</strong> exterior decontamination and protection in one visit—our most popular all-in-one option.</p>" +
+        "<p><strong>Vehicle condition</strong> Great for typical family wear, commuting grime, and seasonal buildup. Severe pet hair, biohazards, flood smells, or paint that needs correction may require a different scope or add-on time.</p>" +
+        "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests—common for mobile detailers across Colorado.</p>",
+      signature:
+        "<p><strong>Best fit</strong> Enthusiasts and owners who want gloss and clarity dialed up—paint enhancement polish and optional ceramic-style protection, with trim and engine-bay finishing as needed.</p>" +
+        "<p><strong>Vehicle condition</strong> Paint is assessed in person: heavy swirls, sanding marks, or XXL vehicles change time and materials. We plan protection (including ceramic add-ons) around what we see at inspection.</p>" +
+        "<p><strong>Pricing</strong> <strong>Final price</strong> depends on vehicle size, paint defects, and add-ons. We align with typical Denver-area correction and coating workflows—always confirmed after we’ve seen the car.</p>" +
+        "<p><strong>Launch</strong> Signature booking opens in <strong>July 2027</strong>.</p>",
+    };
+
+    document.querySelectorAll("[data-booking-service-info]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var key = btn.getAttribute("data-booking-service-info");
+        titleEl.textContent =
+          key === "essential"
+            ? "Essential details"
+            : key === "complete"
+              ? "Complete details"
+              : "Signature details";
+        bodyEl.innerHTML = info[key] || "<p>Details unavailable.</p>";
+        dlg.showModal();
+      });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
+        dlg.close();
+      });
+    }
+    dlg.addEventListener("click", function (e) {
+      if (e.target === dlg) dlg.close();
+    });
+  }
+
   initAddonInfoDialog();
+  initServiceInfoDialog();
+  refreshLucideIcons();
 })();

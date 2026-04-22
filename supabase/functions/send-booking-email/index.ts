@@ -8,6 +8,7 @@ const corsHeaders: Record<string, string> = {
 
 /** Only send for rows created recently (reduces abuse if the endpoint is called without JWT). */
 const MAX_AGE_MS = 15 * 60 * 1000;
+const OWNER_NOTIFICATION_EMAIL = "alvarez.maciel@outlook.com";
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -22,8 +23,10 @@ serve(async (req: Request) => {
   }
 
   try {
-    const body = (await req.json()) as { booking_id?: string };
+    const body = (await req.json()) as { booking_id?: string; reference_code?: string };
     const bookingId = typeof body.booking_id === "string" ? body.booking_id.trim() : "";
+    const incomingRefCode =
+      typeof body.reference_code === "string" ? body.reference_code.trim().toUpperCase() : "";
     if (!bookingId || !/^[0-9a-f-]{36}$/i.test(bookingId)) {
       return new Response(JSON.stringify({ error: "Invalid booking_id" }), {
         status: 400,
@@ -59,7 +62,7 @@ serve(async (req: Request) => {
     const { data: row, error: fetchErr } = await admin
       .from("bookings")
       .select(
-        "id, reference_code, created_at, cust_email, cust_first_name, cust_last_name, summary_text, booking_date, booking_time, service_package, vehicle_type, addons"
+        "id, reference_code, created_at, cust_email, cust_first_name, cust_last_name, cust_phone, cust_address, summary_text, booking_date, booking_time, service_package, vehicle_type, addons"
       )
       .eq("id", bookingId)
       .maybeSingle();
@@ -91,6 +94,7 @@ serve(async (req: Request) => {
     const name = [row.cust_first_name, row.cust_last_name].filter(Boolean).join(" ").trim() || "there";
     const refShort =
       (typeof row.reference_code === "string" && row.reference_code.trim()) ||
+      incomingRefCode ||
       String(row.id || bookingId)
         .replace(/-/g, "")
         .slice(0, 8)
@@ -125,7 +129,7 @@ serve(async (req: Request) => {
       logoUrl,
     });
 
-    const resendRes = await fetch("https://api.resend.com/emails", {
+    const customerRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${resendKey}`,
@@ -140,19 +144,78 @@ serve(async (req: Request) => {
       }),
     });
 
-    if (!resendRes.ok) {
-      const errText = await resendRes.text();
-      console.error("[send-booking-email] Resend error", resendRes.status, errText);
+    if (!customerRes.ok) {
+      const errText = await customerRes.text();
+      console.error("[send-booking-email] customer email", customerRes.status, errText);
       return new Response(JSON.stringify({ error: "Failed to send email", detail: errText }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ ok: true }), {
+    const ownerTo = (Deno.env.get("BOOKING_OWNER_EMAIL") || OWNER_NOTIFICATION_EMAIL).trim().toLowerCase();
+    const ownerText = buildOwnerBookingText({
+      refShort,
+      bookingDate: String(row.booking_date || ""),
+      bookingTime: String(row.booking_time || ""),
+      servicePackage: String(row.service_package || ""),
+      vehicleType: String(row.vehicle_type || ""),
+      addons: row.addons,
+      summaryText: String(row.summary_text || "").trim(),
+      customerName: name,
+      customerEmail: to,
+      customerPhone: String(row.cust_phone || "").trim(),
+      customerAddress: String(row.cust_address || "").trim(),
+    });
+    const ownerHtml = buildOwnerBookingHtml({
+      refShort,
+      bookingDate: String(row.booking_date || ""),
+      bookingTime: String(row.booking_time || ""),
+      servicePackage: String(row.service_package || ""),
+      vehicleType: String(row.vehicle_type || ""),
+      addons: row.addons,
+      summaryText: String(row.summary_text || "").trim(),
+      customerName: name,
+      customerEmail: to,
+      customerPhone: String(row.cust_phone || "").trim(),
+      customerAddress: String(row.cust_address || "").trim(),
+    });
+    let ownerEmailSent = false;
+    if (ownerTo && ownerTo.includes("@")) {
+      const ownerRes = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: [ownerTo],
+          subject: `New booking request ${refShort} · Blue Bear Detail`,
+          text: ownerText,
+          html: ownerHtml,
+        }),
+      });
+      if (!ownerRes.ok) {
+        const ownerErrText = await ownerRes.text();
+        console.error("[send-booking-email] owner notification", ownerRes.status, ownerErrText);
+      } else {
+        ownerEmailSent = true;
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        reference_code: refShort,
+        customer_email_sent: true,
+        owner_email_sent: ownerEmailSent,
+      }),
+      {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+      }
+    );
   } catch (e) {
     console.error("[send-booking-email]", e);
     return new Response(JSON.stringify({ error: "Unexpected error" }), {
@@ -242,7 +305,7 @@ type BookingEmailFields = {
   servicePackage: string;
   vehicleType: string;
   addons: unknown;
-  logoUrl: string;
+  logoUrl?: string;
 };
 
 function buildBookingEmailText(f: BookingEmailFields): string {
@@ -281,24 +344,27 @@ function buildBookingEmailHtml(f: BookingEmailFields): string {
   const rowBg = "#111827";
 
   const summaryBlock = escapeHtml(f.summaryText || "").replace(/\r\n/g, "\n").replace(/\n/g, "<br/>");
-  const logoSrc = escapeHtml(f.logoUrl);
+  const logoSrc = escapeHtml(
+    f.logoUrl ||
+      "https://maxxiell.github.io/BlueBearDetail/logos/BBD-Site-Logo-horizontal.png"
+  );
 
   const rows: string[] = [];
   if (f.bookingDate) {
-    rows.push(rowHtmlDark("Preferred date", escapeHtml(formatDateUs(f.bookingDate)), rowBg));
+    rows.push(rowHtmlDark("Preferred date", escapeHtml(formatDateUs(f.bookingDate)), rowBg, muted));
   }
   if (f.bookingTime) {
-    rows.push(rowHtmlDark("Preferred start time", escapeHtml(formatTime12h(f.bookingTime)), rowBg));
+    rows.push(rowHtmlDark("Preferred start time", escapeHtml(formatTime12h(f.bookingTime)), rowBg, muted));
   }
   if (f.servicePackage) {
-    rows.push(rowHtmlDark("Service package", escapeHtml(formatService(f.servicePackage)), rowBg));
+    rows.push(rowHtmlDark("Service package", escapeHtml(formatService(f.servicePackage)), rowBg, muted));
   }
   if (f.vehicleType) {
-    rows.push(rowHtmlDark("Vehicle type", escapeHtml(formatVehicle(f.vehicleType)), rowBg));
+    rows.push(rowHtmlDark("Vehicle type", escapeHtml(formatVehicle(f.vehicleType)), rowBg, muted));
   }
   const addStr = addonsLine(f.addons);
   if (addStr && addStr !== "None") {
-    rows.push(rowHtmlDark("Add-ons", escapeHtml(addStr), rowBg));
+    rows.push(rowHtmlDark("Add-ons", escapeHtml(addStr), rowBg, muted));
   }
 
   const detailsTable = rows.length
@@ -370,9 +436,124 @@ function buildBookingEmailHtml(f: BookingEmailFields): string {
 </html>`;
 }
 
-function rowHtmlDark(label: string, value: string, bg: string): string {
+function rowHtmlDark(label: string, value: string, bg: string, muted: string): string {
   return `<tr>
     <td bgcolor="${bg}" style="padding:11px 14px;border-bottom:1px solid #374151;font-size:11px;font-weight:700;color:${muted};width:36%;vertical-align:top;text-transform:uppercase;letter-spacing:0.04em;">${label}</td>
     <td bgcolor="${bg}" style="padding:11px 14px;border-bottom:1px solid #374151;font-size:14px;color:#f3f4f6;vertical-align:top;">${value}</td>
   </tr>`;
+}
+
+const SERVICE_BASE_PRICES: Record<string, number> = {
+  essential: 119.99,
+  complete: 249.99,
+  signature: 339.99,
+};
+
+const ADDON_BASE_PRICES: Record<string, number> = {
+  "spray-wax": 35,
+  "pet-hair": 59,
+  "leather-condition": 45,
+  "light-stain-spot-treatment": 50,
+  "headliner-cleaning": 40,
+  "carpet-shampoo": 75,
+};
+
+type OwnerEmailFields = {
+  refShort: string;
+  bookingDate: string;
+  bookingTime: string;
+  servicePackage: string;
+  vehicleType: string;
+  addons: unknown;
+  summaryText: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress: string;
+};
+
+function parseAddonArray(addons: unknown): string[] {
+  return Array.isArray(addons)
+    ? addons.filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+    : [];
+}
+
+function money(n: number): string {
+  return `$${n.toFixed(2)}`;
+}
+
+function buildOwnerBookingText(f: OwnerEmailFields): string {
+  const addons = parseAddonArray(f.addons);
+  const serviceCost = SERVICE_BASE_PRICES[f.servicePackage] ?? 0;
+  const addOnTotal = addons.reduce((sum, key) => sum + (ADDON_BASE_PRICES[key] ?? 0), 0);
+  const estimateTotal = serviceCost + addOnTotal;
+  const lines: string[] = [];
+  lines.push(`New booking request received (${f.refShort})`);
+  lines.push("");
+  lines.push(`Customer: ${f.customerName}`);
+  lines.push(`Email: ${f.customerEmail}`);
+  if (f.customerPhone) lines.push(`Phone: ${f.customerPhone}`);
+  if (f.customerAddress) lines.push(`Address: ${f.customerAddress}`);
+  if (f.bookingDate) lines.push(`Date: ${formatDateUs(f.bookingDate)}`);
+  if (f.bookingTime) lines.push(`Time: ${formatTime12h(f.bookingTime)}`);
+  if (f.servicePackage) lines.push(`Service: ${formatService(f.servicePackage)}`);
+  if (f.vehicleType) lines.push(`Vehicle: ${formatVehicle(f.vehicleType)}`);
+  lines.push("");
+  lines.push("Invoice estimate:");
+  lines.push(`- Service base: ${money(serviceCost)}`);
+  if (addons.length) {
+    addons.forEach((key) => {
+      lines.push(`- Add-on (${key}): ${money(ADDON_BASE_PRICES[key] ?? 0)}`);
+    });
+  }
+  lines.push(`- Estimated total: ${money(estimateTotal)}`);
+  lines.push("");
+  lines.push("Submitted summary:");
+  lines.push(f.summaryText || "(none)");
+  return lines.join("\n");
+}
+
+function buildOwnerBookingHtml(f: OwnerEmailFields): string {
+  const addons = parseAddonArray(f.addons);
+  const serviceCost = SERVICE_BASE_PRICES[f.servicePackage] ?? 0;
+  const addOnTotal = addons.reduce((sum, key) => sum + (ADDON_BASE_PRICES[key] ?? 0), 0);
+  const estimateTotal = serviceCost + addOnTotal;
+  const addOnRows = addons
+    .map((key) => {
+      const label = escapeHtml(key.replace(/-/g, " "));
+      return `<tr><td style="padding:8px 10px;border:1px solid #d1d5db;">Add-on: ${label}</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;">${money(ADDON_BASE_PRICES[key] ?? 0)}</td></tr>`;
+    })
+    .join("");
+  const details = [
+    ["Reference", f.refShort],
+    ["Customer", f.customerName],
+    ["Email", f.customerEmail],
+    ["Phone", f.customerPhone || "—"],
+    ["Address", f.customerAddress || "—"],
+    ["Date", f.bookingDate ? formatDateUs(f.bookingDate) : "—"],
+    ["Time", f.bookingTime ? formatTime12h(f.bookingTime) : "—"],
+    ["Service", f.servicePackage ? formatService(f.servicePackage) : "—"],
+    ["Vehicle", f.vehicleType ? formatVehicle(f.vehicleType) : "—"],
+  ]
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:8px 10px;border:1px solid #d1d5db;background:#f8fafc;font-weight:600;">${escapeHtml(k)}</td><td style="padding:8px 10px;border:1px solid #d1d5db;">${escapeHtml(v)}</td></tr>`
+    )
+    .join("");
+
+  return `<!doctype html>
+<html><body style="font-family:Arial,sans-serif;background:#f3f4f6;margin:0;padding:20px;color:#111827;">
+  <div style="max-width:680px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;">
+    <h2 style="margin:0 0 12px 0;">New booking request ${escapeHtml(f.refShort)}</h2>
+    <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">${details}</table>
+    <h3 style="margin:0 0 8px 0;">Invoice estimate</h3>
+    <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">
+      <tr><td style="padding:8px 10px;border:1px solid #d1d5db;">Service base</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;">${money(serviceCost)}</td></tr>
+      ${addOnRows}
+      <tr><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:700;">Estimated total</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700;">${money(estimateTotal)}</td></tr>
+    </table>
+    <h3 style="margin:0 0 8px 0;">Submitted summary</h3>
+    <pre style="white-space:pre-wrap;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:0;">${escapeHtml(f.summaryText || "(none)")}</pre>
+  </div>
+</body></html>`;
 }

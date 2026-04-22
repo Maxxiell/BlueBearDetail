@@ -109,18 +109,30 @@ async function submitBookAppointmentInner(form, summaryText) {
   }
 
   var emailSent = false;
+  var ownerEmailSent = false;
+  var canonicalReferenceCode = referenceCode;
   try {
     var invoked = await supabase.functions.invoke("send-booking-email", {
-      body: { booking_id: bookingId },
+      body: { booking_id: bookingId, reference_code: referenceCode },
     });
     if (invoked.error) {
       console.warn("[booking-submit-supabase] send-booking-email", invoked.error);
     } else {
-      emailSent = true;
+      var fnData = invoked.data || {};
+      emailSent = fnData.customer_email_sent !== false;
+      ownerEmailSent = fnData.owner_email_sent === true;
+      if (fnData.reference_code) {
+        canonicalReferenceCode = String(fnData.reference_code).trim() || referenceCode;
+      }
     }
   } catch (fnErr) {
     console.warn("[booking-submit-supabase] send-booking-email", fnErr);
   }
 
-  return { id: bookingId, referenceCode: referenceCode, emailSent: emailSent };
+  return {
+    id: bookingId,
+    referenceCode: canonicalReferenceCode,
+    emailSent: emailSent,
+    ownerEmailSent: ownerEmailSent,
+  };
 }

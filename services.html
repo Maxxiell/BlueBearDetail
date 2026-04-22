@@ -35,6 +35,16 @@
     </nav>
   </header>
 
+  <div class="promo-marquee-wrap promo-marquee-wrap--header" data-promo-marquee-wrap>
+    <div class="promo-marquee" role="status" aria-live="polite">
+      <div class="promo-marquee__track">
+        <span>15% FOR NEW CUSTOMERS</span>
+        <span>15% FOR NEW CUSTOMERS</span>
+        <span>15% FOR NEW CUSTOMERS</span>
+      </div>
+    </div>
+  </div>
+
   <main class="page-services">
     <div class="page-services__bruin" aria-hidden="true">
       <img src="logos/BBD-BruinBear-LLC.png" alt="" width="816" height="816" decoding="async">
@@ -44,97 +54,125 @@
       <p data-bbd="services.heroP">Three clear packages — pick what fits your vehicle and schedule. Fleet and custom work available on request.</p>
     </div>
     <div class="content-block content-block--dark">
-      <div class="promo-marquee-wrap" data-promo-marquee-wrap>
-        <div class="promo-marquee" role="status" aria-live="polite">
-          <div class="promo-marquee__track">
-            <span>15% OFF FOR NEW CUSTOMERS · USE CODE WASH15 AT CHECKOUT</span>
-            <span>15% OFF FOR NEW CUSTOMERS · USE CODE WASH15 AT CHECKOUT</span>
-            <span>15% OFF FOR NEW CUSTOMERS · USE CODE WASH15 AT CHECKOUT</span>
-          </div>
-        </div>
-      </div>
       <div class="package-grid">
         <div class="package-card-wrap">
-          <a href="book-flow.html?service=essential" class="package-card package-card--tier-silver package-card--link">
-            <p class="package-card__eyebrow">Package · 01</p>
-            <h2 class="package-card__title">
-              <span class="package-card__title-label">Essential</span>
-              <span class="package-card__title-icon" aria-hidden="true"><i class="fa-solid fa-chess-bishop"></i></span>
-            </h2>
-            <p class="package-card__tagline">Maintenance and refresh — ideal between deeper details.</p>
-            <ul class="package-card__list" data-package-bullets="essential">
-              <li>Exterior hand wash &amp; dry</li>
-              <li>Wheels &amp; tires cleaned, tires dressed</li>
-              <li>Interior vacuum &amp; wipe-down</li>
-              <li>Glass cleaned inside &amp; out</li>
-            </ul>
-            <p class="package-card__price" data-service-price="essential">
-              Starting at
-              <span class="package-card__price-old">$99.99</span>
-              <span class="package-card__price-num">$84.99</span>
-            </p>
-            <p class="package-card__promo-note" data-service-promo-line="essential" hidden>
-              <span class="package-card__promo-note__text"></span>
-            </p>
-          </a>
-          <button type="button" class="package-card__info-btn" data-open-package="essential" aria-label="Who the Essential package is for" title="Quick info: who this package fits">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="package-card-wrap">
-          <a href="book-flow.html?service=complete" class="package-card package-card--tier-blue package-card--link">
-            <p class="package-card__eyebrow">Package · 02</p>
-            <h2 class="package-card__title">
-              <span class="package-card__title-label">Complete</span>
-              <span class="package-card__title-icon" aria-hidden="true"><i class="fa-solid fa-chess-knight"></i></span>
-            </h2>
-            <p class="package-card__tagline">Full interior and exterior in one visit — our most popular balance.</p>
-            <ul class="package-card__list" data-package-bullets="complete">
-              <li>Everything in Essential</li>
-              <li>Deep interior: seats &amp; carpets shampooed or steamed</li>
-              <li>Panels, vents, and cupholders detailed</li>
-              <li>Exterior decontamination, sealant or wax protection</li>
-            </ul>
-            <p class="package-card__price" data-service-price="complete">
-              Starting at
-              <span class="package-card__price-old">$249.99</span>
-              <span class="package-card__price-num">$212.49</span>
-            </p>
-            <p class="package-card__promo-note" data-service-promo-line="complete" hidden>
-              <span class="package-card__promo-note__text"></span>
-            </p>
-          </a>
-          <button type="button" class="package-card__info-btn" data-open-package="complete" aria-label="Who the Complete package is for" title="Quick info: who this package fits">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="package-card-wrap">
-          <div class="package-card package-card--tier-gold package-card--disabled" aria-disabled="true">
-            <p class="package-card__eyebrow">Package · 03</p>
-            <h2 class="package-card__title">
-              <span class="package-card__title-label">Signature</span>
-              <span class="package-card__title-icon" aria-hidden="true"><i class="fa-solid fa-chess-queen"></i></span>
-            </h2>
-            <p class="package-card__tagline">Maximum gloss and protection — showroom-level finish.</p>
-            <ul class="package-card__list" data-package-bullets="signature">
-              <li>Everything in Complete</li>
-              <li>Paint enhancement polish to reduce swirls &amp; boost gloss</li>
-              <li>Ceramic coating add-on available</li>
-              <li>Engine bay &amp; trim dressings as needed</li>
-            </ul>
-            <p class="package-card__price" data-service-price="signature">
-              Starting at
-              <span class="package-card__price-old">$339.99</span>
-              <span class="package-card__price-num">$288.99</span>
-            </p>
-            <p class="package-card__promo-note" data-service-promo-line="signature" hidden>
-              <span class="package-card__promo-note__text"></span>
-            </p>
-            <span class="coming-soon-badge">Coming soon</span>
+          <div class="package-card-flip" data-flip-card>
+            <div class="package-card-flip__inner">
+              <div class="package-card package-card--tier-silver package-card-flip__face package-card-flip__face--front">
+                <p class="package-card__eyebrow">Package · 01</p>
+                <h2 class="package-card__title">
+                  <span class="package-card__title-label">Essential</span>
+                  <span class="package-card__title-icon" aria-hidden="true"><i class="fa-solid fa-chess-bishop"></i></span>
+                </h2>
+                <p class="package-card__tagline">Maintenance and refresh — ideal between deeper details.</p>
+                <ul class="package-card__list" data-package-bullets="essential">
+                  <li>Exterior hand wash &amp; dry</li>
+                  <li>Wheels &amp; tires cleaned, tires dressed</li>
+                  <li>Interior vacuum &amp; wipe-down</li>
+                  <li>Glass cleaned inside &amp; out</li>
+                </ul>
+                <p class="package-card__price" data-service-price="essential">
+                  Starting at
+                  <span class="package-card__price-old">$119.99</span>
+                  <span class="package-card__price-num">$101.99</span>
+                </p>
+                <p class="package-card__promo-note" data-service-promo-line="essential" hidden>
+                  <span class="package-card__promo-note__text"></span>
+                </p>
+                <p class="package-card__flip-hint">Tap card for details</p>
+              </div>
+              <div class="package-card package-card--tier-blue package-card-flip__face package-card-flip__face--back">
+                <p class="package-card__eyebrow package-card__eyebrow--info">Who this is for</p>
+                <h3 class="package-card__back-title">Essential Details</h3>
+                <div class="package-card__back-copy">
+                  <p><strong>Best fit</strong> Daily drivers that stay relatively clean—quick exterior refresh and light interior tidy between deeper details.</p>
+                  <p><strong>Vehicle condition</strong> Works best with light dust, routine dirt, and manageable interiors. Heavy mud, thick pet hair, stains, smoke odor, or long-neglected cabins usually need more time or a higher package.</p>
+                  <p><strong>Pricing</strong> Package prices are <strong>starting points</strong>. We confirm scope on site; if your vehicle needs extra labor or products, we’ll discuss an updated quote before work begins.</p>
+                </div>
+                <a class="btn btn-primary btn--square package-card__back-cta" href="book-flow.html?service=essential">Book Essential</a>
+              </div>
+            </div>
           </div>
-          <button type="button" class="package-card__info-btn" data-open-package="signature" aria-label="Who the Signature package is for" title="Quick info: who this package fits">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          </button>
+        </div>
+        <div class="package-card-wrap">
+          <div class="package-card-flip" data-flip-card>
+            <div class="package-card-flip__inner">
+              <div class="package-card package-card--tier-blue package-card-flip__face package-card-flip__face--front">
+                <p class="package-card__eyebrow">Package · 02</p>
+                <h2 class="package-card__title">
+                  <span class="package-card__title-label">Complete</span>
+                  <span class="package-card__title-icon" aria-hidden="true"><i class="fa-solid fa-chess-knight"></i></span>
+                </h2>
+                <p class="package-card__tagline">Full interior and exterior in one visit — our most popular balance.</p>
+                <ul class="package-card__list" data-package-bullets="complete">
+                  <li>Everything in Essential</li>
+                  <li>Deep interior: seats &amp; carpets shampooed or steamed</li>
+                  <li>Panels, vents, and cupholders detailed</li>
+                  <li>Exterior decontamination, sealant or wax protection</li>
+                </ul>
+                <p class="package-card__price" data-service-price="complete">
+                  Starting at
+                  <span class="package-card__price-old">$249.99</span>
+                  <span class="package-card__price-num">$212.49</span>
+                </p>
+                <p class="package-card__promo-note" data-service-promo-line="complete" hidden>
+                  <span class="package-card__promo-note__text"></span>
+                </p>
+                <p class="package-card__flip-hint">Tap card for details</p>
+              </div>
+              <div class="package-card package-card--tier-blue package-card-flip__face package-card-flip__face--back">
+                <p class="package-card__eyebrow package-card__eyebrow--info">Who this is for</p>
+                <h3 class="package-card__back-title">Complete Details</h3>
+                <div class="package-card__back-copy">
+                  <p><strong>Best fit</strong> Customers who want a full interior shampoo or steam treatment <strong>and</strong> exterior decontamination and protection in one visit—our most popular all-in-one option.</p>
+                  <p><strong>Vehicle condition</strong> Great for typical family wear, commuting grime, and seasonal buildup. Severe pet hair, biohazards, flood smells, or paint that needs correction may require a different scope or add-on time.</p>
+                  <p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests—common for mobile detailers across Colorado.</p>
+                </div>
+                <a class="btn btn-primary btn--square package-card__back-cta" href="book-flow.html?service=complete">Book Complete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="package-card-wrap">
+          <div class="package-card-flip" data-flip-card>
+            <div class="package-card-flip__inner">
+              <div class="package-card package-card--tier-gold package-card--disabled package-card-flip__face package-card-flip__face--front" aria-disabled="true">
+                <p class="package-card__eyebrow">Package · 03</p>
+                <h2 class="package-card__title">
+                  <span class="package-card__title-label">Signature</span>
+                  <span class="package-card__title-icon" aria-hidden="true"><i class="fa-solid fa-chess-queen"></i></span>
+                </h2>
+                <p class="package-card__tagline">Maximum gloss and protection — showroom-level finish.</p>
+                <ul class="package-card__list" data-package-bullets="signature">
+                  <li>Everything in Complete</li>
+                  <li>Paint enhancement polish to reduce swirls &amp; boost gloss</li>
+                  <li>Ceramic coating add-on available</li>
+                  <li>Engine bay &amp; trim dressings as needed</li>
+                </ul>
+                <p class="package-card__price" data-service-price="signature">
+                  Starting at
+                  <span class="package-card__price-old">$339.99</span>
+                  <span class="package-card__price-num">$288.99</span>
+                </p>
+                <p class="package-card__promo-note" data-service-promo-line="signature" hidden>
+                  <span class="package-card__promo-note__text"></span>
+                </p>
+                <span class="coming-soon-badge coming-soon-badge--front">Coming July 2027</span>
+                <p class="package-card__flip-hint">Tap card for details</p>
+              </div>
+              <div class="package-card package-card--tier-blue package-card-flip__face package-card-flip__face--back">
+                <p class="package-card__eyebrow package-card__eyebrow--info">Who this is for</p>
+                <h3 class="package-card__back-title">Signature Details</h3>
+                <div class="package-card__back-copy">
+                  <p><strong>Best fit</strong> Enthusiasts and owners who want gloss and clarity dialed up—paint enhancement polish and optional ceramic-style protection, with trim and engine-bay finishing as needed.</p>
+                  <p><strong>Vehicle condition</strong> Paint is assessed in person: heavy swirls, sanding marks, or XXL vehicles change time and materials. We plan protection (including ceramic add-ons) around what we see at inspection.</p>
+                  <p><strong>Pricing</strong> <strong>Final price</strong> depends on vehicle size, paint defects, and add-ons. We align with typical Denver-area correction and coating workflows—always confirmed after we’ve seen the car.</p>
+                  <p><strong>Launch</strong> Signature booking opens in <strong>July 2027</strong>.</p>
+                </div>
+                <button type="button" class="btn btn-outline package-card__back-cta" disabled>Coming July 2027</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <p class="page-services__cta">
@@ -142,21 +180,6 @@
       </p>
     </div>
   </main>
-
-  <dialog id="package-info-dialog" class="package-info-dialog" aria-labelledby="package-info-dialog-title">
-    <div class="package-info-dialog__panel">
-      <header class="package-info-dialog__header">
-        <h2 id="package-info-dialog-title" class="package-info-dialog__title"></h2>
-        <button type="button" class="package-info-dialog__close" data-close-package-dialog aria-label="Close">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-        </button>
-      </header>
-      <div id="package-info-dialog-body" class="package-info-dialog__body"></div>
-      <footer class="package-info-dialog__footer">
-        <button type="button" class="btn btn-primary" data-close-package-dialog>Got it</button>
-      </footer>
-    </div>
-  </dialog>
 
   <div class="footer-payments-bar footer-payments-bar--dark" aria-label="Accepted payments">
     <div class="footer-payments-bar__inner">
@@ -260,6 +283,6 @@
   <script type="module" src="js/site-settings-remote.js"></script>
   <script type="module" src="js/auth-dropdown.js"></script>
   <script src="js/nav.js"></script>
-  <script src="js/package-info-modal.js"></script>
+  <script src="js/services-flip.js"></script>
 </body>
 </html>

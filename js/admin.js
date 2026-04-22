@@ -999,7 +999,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
           enabled: promoEnabledInput ? promoEnabledInput.checked : true,
           discountPct: Math.max(0, Math.min(100, discountPct)),
           code: String(promoCode?.value || "").trim() || "WASH15",
-          text: String(promoText?.value || "").trim() || "15% OFF FOR NEW CUSTOMERS",
+          text: String(promoText?.value || "").trim() || "15% FOR NEW CUSTOMERS",
         },
         packageBullets: {
           essential: parseBulletLines(packageBulletsEssential),

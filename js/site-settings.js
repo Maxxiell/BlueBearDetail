@@ -1,7 +1,7 @@
 (function () {
   var SITE_SETTINGS_KEY = "bbdSiteSettings";
   var STORE_NAME = "bbdPersistentStore";
-  var FALLBACK_BASE_PRICES = { essential: 99.99, complete: 249.99, signature: 339.99 };
+  var FALLBACK_BASE_PRICES = { essential: 119.99, complete: 249.99, signature: 339.99 };
   var FALLBACK_PACKAGE_BULLETS = {
     essential: [
       "Exterior hand wash & dry",
@@ -23,7 +23,7 @@
     ],
   };
 
-  var CARD_PROMO_LABEL = "With Promo Code";
+  var CARD_PROMO_LABEL = "With Promo";
 
   function createPersistentStore() {
     var COOKIE_PREFIX = "bbdps_";
@@ -242,10 +242,8 @@
     discount = Math.max(0, Math.min(100, discount));
 
     var promoText =
-      typeof promo.text === "string" && promo.text.trim() ? promo.text.trim() : "15% OFF FOR NEW CUSTOMERS";
-    var promoCode =
-      typeof promo.code === "string" && promo.code.trim() ? promo.code.trim().toUpperCase() : "WASH15";
-    var fullMarquee = promoText + " · USE CODE " + promoCode + " AT CHECKOUT";
+      typeof promo.text === "string" && promo.text.trim() ? promo.text.trim() : "15% FOR NEW CUSTOMERS";
+    var fullMarquee = promoText;
 
     var main = document.querySelector("main.page-services");
     if (main) {

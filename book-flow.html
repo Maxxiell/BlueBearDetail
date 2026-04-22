@@ -59,32 +59,68 @@
       <form id="booking-form" class="booking-form" novalidate data-current-step="1">
         <div class="booking-step is-active" data-step="1" id="booking-step-1">
           <h2 class="booking-step__title">Select a service</h2>
-          <p class="booking-step__hint">Pick one of our three packages.</p>
+          <p class="booking-step__hint">Pick your package. Essential and Complete can be booked today. Signature launches in July 2027.</p>
           <div class="booking-choice-grid" role="radiogroup" aria-label="Service package">
-            <label class="booking-card">
-              <input type="radio" name="service" value="essential">
-              <span class="booking-card__body">
-                <span class="booking-card__eyebrow">Package · 01</span>
-                <span class="booking-card__title">Essential</span>
-                <span class="booking-card__desc">Wash, wheels, interior vacuum &amp; wipe, glass.</span>
-              </span>
-            </label>
-            <label class="booking-card booking-card--featured">
-              <input type="radio" name="service" value="complete">
-              <span class="booking-card__body">
-                <span class="booking-card__eyebrow">Package · 02</span>
-                <span class="booking-card__title">Complete</span>
-                <span class="booking-card__desc">Full interior &amp; exterior — our most popular balance.</span>
-              </span>
-            </label>
-            <label class="booking-card booking-card--disabled">
-              <input type="radio" name="service" value="signature" disabled>
-              <span class="booking-card__body">
-                <span class="booking-card__eyebrow">Package · 03</span>
-                <span class="booking-card__title">Signature</span>
-                <span class="booking-card__desc">Maximum gloss, polish, and protection options. Coming soon.</span>
-              </span>
-            </label>
+            <div class="booking-service-card-wrap">
+              <label class="booking-card booking-card--service">
+                <input type="radio" name="service" value="essential">
+                <span class="booking-card__body">
+                  <span class="booking-card__eyebrow">Package · 01</span>
+                  <span class="booking-card__title">Essential</span>
+                  <span class="booking-card__desc">Maintenance and refresh — ideal between deeper details.</span>
+                  <ul class="booking-card__mini-list">
+                    <li>Exterior hand wash &amp; dry</li>
+                    <li>Wheels &amp; tires cleaned, tires dressed</li>
+                    <li>Interior vacuum &amp; wipe-down</li>
+                    <li>Glass cleaned inside &amp; out</li>
+                  </ul>
+                  <span class="booking-card__starting-at">Starting at <strong>$119.99</strong></span>
+                </span>
+              </label>
+              <button type="button" class="booking-service-info-btn" data-booking-service-info="essential" aria-label="Essential package details">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="booking-service-card-wrap">
+              <label class="booking-card booking-card--featured booking-card--service">
+                <input type="radio" name="service" value="complete">
+                <span class="booking-card__body">
+                  <span class="booking-card__eyebrow">Package · 02</span>
+                  <span class="booking-card__title">Complete</span>
+                  <span class="booking-card__desc">Full interior and exterior in one visit — our most popular balance.</span>
+                  <ul class="booking-card__mini-list">
+                    <li>Everything in Essential</li>
+                    <li>Deep interior: seats &amp; carpets shampooed or steamed</li>
+                    <li>Panels, vents, and cupholders detailed</li>
+                    <li>Exterior decontamination, sealant or wax protection</li>
+                  </ul>
+                  <span class="booking-card__starting-at">Starting at <strong>$249.99</strong></span>
+                </span>
+              </label>
+              <button type="button" class="booking-service-info-btn" data-booking-service-info="complete" aria-label="Complete package details">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="booking-service-card-wrap booking-service-card-wrap--disabled">
+              <div class="booking-card booking-card--disabled booking-card--service" aria-disabled="true">
+                <span class="booking-card__body">
+                  <span class="booking-card__eyebrow">Package · 03</span>
+                  <span class="booking-card__title">Signature</span>
+                  <span class="booking-card__desc">Maximum gloss, polish, and protection options.</span>
+                  <ul class="booking-card__mini-list">
+                    <li>Everything in Complete</li>
+                    <li>Paint enhancement polish to reduce swirls &amp; boost gloss</li>
+                    <li>Ceramic coating add-on available</li>
+                    <li>Engine bay &amp; trim dressings as needed</li>
+                  </ul>
+                  <span class="booking-card__starting-at">Starting at <strong>$339.99</strong></span>
+                  <span class="booking-card__coming-soon">Coming July 2027</span>
+                </span>
+              </div>
+              <button type="button" class="booking-service-info-btn" data-booking-service-info="signature" aria-label="Signature package details">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -320,9 +356,9 @@
                 </span>
               </span>
             </label>
-            <label class="booking-complete-card booking-complete-card--pay">
+            <label class="booking-complete-card booking-complete-card--pay" aria-disabled="true">
               <span class="booking-complete-card__inner">
-                <input type="radio" name="checkoutMethod" value="pay" class="booking-complete-card__radio" aria-label="Pay online">
+                <input type="radio" name="checkoutMethod" value="pay" class="booking-complete-card__radio" aria-label="Pay online" disabled>
                 <span class="booking-complete-card__panel">
                   <span class="booking-complete-card__badge">Coming soon</span>
                   <span class="booking-complete-card__title">Pay online</span>
@@ -351,9 +387,16 @@
 
       <div class="booking-done" id="booking-done" hidden>
         <div class="booking-done__inner">
-          <h2 class="booking-done__title">Request received</h2>
+          <h2 class="booking-done__title"><i data-lucide="ticket" aria-hidden="true"></i> Request Ticket</h2>
           <p class="booking-done__text" id="booking-done-text">Your booking request was saved. We’ll follow up by phone or email to confirm.</p>
-          <pre class="booking-done__summary" id="booking-summary-text"></pre>
+          <div class="booking-done__meta">
+            <span><i data-lucide="shield-check" aria-hidden="true"></i> Secured submission</span>
+            <span><i data-lucide="car-front" aria-hidden="true"></i> Mobile detailing request</span>
+          </div>
+          <div class="booking-done__summary-card">
+            <h3 class="booking-done__summary-title"><i data-lucide="receipt-text" aria-hidden="true"></i> Booking details</h3>
+            <div class="booking-done__summary" id="booking-summary-text"></div>
+          </div>
           <div class="booking-done__actions">
             <button type="button" class="btn btn-outline" id="booking-copy-summary">Copy details</button>
             <a class="btn btn-primary" href="contact.html">Contact</a>
@@ -370,6 +413,16 @@
           <button type="button" class="package-info-dialog__close" id="booking-addon-info-close" aria-label="Close">&times;</button>
         </div>
         <div class="package-info-dialog__body" id="booking-addon-info-body"></div>
+      </div>
+    </dialog>
+
+    <dialog id="booking-service-info-dialog" class="package-info-dialog" aria-labelledby="booking-service-info-title">
+      <div class="package-info-dialog__panel">
+        <div class="package-info-dialog__header">
+          <h2 id="booking-service-info-title" class="package-info-dialog__title">Package details</h2>
+          <button type="button" class="package-info-dialog__close" id="booking-service-info-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="package-info-dialog__body" id="booking-service-info-body"></div>
       </div>
     </dialog>
   </main>
