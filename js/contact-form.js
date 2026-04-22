@@ -1,12 +1,7 @@
-import { supabase } from "./auth-client.js";
-import { isSupabaseConfigured } from "./supabase-config.js";
+(function () {
+  var form = document.querySelector("form.contact-form");
+  if (!form) return;
 
-var FORMSPREE_FALLBACK_ENDPOINT = "https://formspree.io/f/xpqkyyyo";
-
-var form = document.querySelector("form.contact-form");
-if (!form) {
-  // no-op when not on contact page
-} else {
   var submitBtn = form.querySelector('button[type="submit"]');
   var splash = document.getElementById("contact-success-splash");
 
@@ -39,57 +34,44 @@ if (!form) {
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
-
+    var endpoint = form.getAttribute("action") || "https://formspree.io/f/xpqkyyyo";
     var fd = new FormData(form);
-    var payload = {
-      name: String(fd.get("name") || "").trim(),
-      email: String(fd.get("email") || "").trim().toLowerCase(),
-      phone: String(fd.get("phone") || "").trim(),
-      message: String(fd.get("message") || "").trim(),
-    };
-
-    if (!payload.name || !payload.email || !payload.message) {
+    var name = String(fd.get("name") || "").trim();
+    var email = String(fd.get("email") || "").trim();
+    var message = String(fd.get("message") || "").trim();
+    var captchaToken = String(fd.get("g-recaptcha-response") || "").trim();
+    if (!name || !email || !message) {
       showErrorToast("Please fill out name, email, and message.");
+      return;
+    }
+    if (!captchaToken) {
+      showErrorToast("Please complete the reCAPTCHA checkbox.");
       return;
     }
 
     setSubmitting(true);
     try {
-      var sent = false;
-      if (isSupabaseConfigured()) {
-        try {
-          var invoked = await supabase.functions.invoke("send-contact-email", {
-            body: payload,
-          });
-          if (!invoked.error) {
-            sent = true;
-          }
-        } catch (_supabaseErr) {
-          sent = false;
-        }
+      var res = await fetch(endpoint, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: fd,
+      });
+      if (!res.ok) {
+        throw new Error("Contact submit failed");
       }
-
-      if (!sent) {
-        var fallbackRes = await fetch(FORMSPREE_FALLBACK_ENDPOINT, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-        if (!fallbackRes.ok) {
-          throw new Error("Fallback contact submit failed");
-        }
-      }
-
       form.reset();
+      if (typeof grecaptcha !== "undefined" && grecaptcha && typeof grecaptcha.reset === "function") {
+        grecaptcha.reset();
+      }
       showSuccessSplashAndRedirect();
     } catch (err) {
       console.error("[contact-form]", err);
+      if (typeof grecaptcha !== "undefined" && grecaptcha && typeof grecaptcha.reset === "function") {
+        grecaptcha.reset();
+      }
       showErrorToast("Could not send message right now. Please try again.");
     } finally {
       setSubmitting(false);
     }
   });
-}
+})();

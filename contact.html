@@ -42,9 +42,9 @@
     </div>
     <div class="content-block content-block--dark contact-page">
       <p class="contact-page__links" id="book">
-        <a class="contact-page__text-link" href="book.html">Book online</a>
+        <a class="contact-page__text-link" href="book.html">Book Online</a>
         <span class="contact-alt"> or </span>
-        <a class="contact-page__text-link" href="tel:+17206012503">Call us</a>
+        <a class="contact-page__text-link" href="tel:+17206012503">Call Us</a>
       </p>
 
       <div class="contact-page__card">
@@ -54,6 +54,7 @@
             <form
               id="contact-form"
               class="contact-form contact-form--split"
+              action="https://formspree.io/f/xpqkyyyo"
               method="POST"
               novalidate
             >
@@ -72,6 +73,9 @@
               <div>
                 <label for="msg">Message</label>
                 <textarea id="msg" name="message" required placeholder="Vehicle type, preferred date, and service…"></textarea>
+              </div>
+              <div class="contact-form__captcha">
+                <div class="g-recaptcha" data-sitekey="6Lf0xsQsAAAAAGp2RU4uPzN-XjXzgjZ20U2s11Am"></div>
               </div>
               <button class="btn btn-primary" type="submit">Send</button>
             </form>
@@ -171,7 +175,7 @@
     <div class="footer-top">
       <div class="footer-col footer-col--brand">
         <img class="footer-brand-mark" src="logos/BBD-Logo-BruinBear.png" alt="" width="120" height="120" loading="lazy" decoding="async">
-        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved. Serving Denver and surrounding areas.</p>
+        <p class="footer-copy">© <span class="footer-year">2026</span> Blue Bear Auto-Care LLC d/b/a Blue Bear Detail. All rights reserved.</p>
       </div>
       <nav class="footer-nav" aria-label="Footer">
         <div class="footer-nav__col">
@@ -212,12 +216,13 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script type="module" src="js/auth-dropdown.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/site-settings.js"></script>
   <script type="module" src="js/site-settings-remote.js"></script>
   <script src="js/toast.js"></script>
-  <script type="module" src="js/contact-form.js"></script>
+  <script src="js/contact-form.js"></script>
   <script src="js/contact-carousel.js"></script>
 </body>
 </html>

@@ -1621,7 +1621,7 @@ body.page-admin .page-dark {
 
 .package-card-flip {
   position: relative;
-  min-height: 32rem;
+  min-height: 34rem;
   perspective: 1400px;
   cursor: pointer;
 }
@@ -1703,13 +1703,20 @@ body.page-admin .page-dark {
 }
 
 .package-card__price {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 1rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.52);
+}
+
+.package-card__meta {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .package-card__price-old {
@@ -2175,6 +2182,11 @@ body.page-admin .page-dark {
 .page-contact .contact-form .btn-primary:hover {
   background: rgba(255, 255, 255, 0.92);
   color: var(--brand);
+}
+
+.contact-form__captcha {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .contact-success-splash {
