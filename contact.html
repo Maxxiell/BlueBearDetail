@@ -54,8 +54,8 @@
             <form
               id="contact-form"
               class="contact-form contact-form--split"
-              action="https://formspree.io/f/xpqkyyyo"
               method="POST"
+              novalidate
             >
               <div>
                 <label for="name">Name</label>
@@ -101,6 +101,15 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="contact-success-splash" id="contact-success-splash" hidden aria-live="polite">
+      <div class="contact-success-splash__panel">
+        <span class="contact-success-splash__icon" aria-hidden="true">
+          <i data-lucide="circle-check-big"></i>
+        </span>
+        <p class="contact-success-splash__title">Message sent</p>
+        <p class="contact-success-splash__text">Thanks for reaching out. Redirecting to home...</p>
       </div>
     </div>
   </main>
@@ -208,7 +217,7 @@
   <script src="js/site-settings.js"></script>
   <script type="module" src="js/site-settings-remote.js"></script>
   <script src="js/toast.js"></script>
-  <script src="js/contact-form.js"></script>
+  <script type="module" src="js/contact-form.js"></script>
   <script src="js/contact-carousel.js"></script>
 </body>
 </html>

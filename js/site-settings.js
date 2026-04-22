@@ -8,6 +8,7 @@
       "Wheels & tires cleaned, tires dressed",
       "Interior vacuum & wipe-down",
       "Glass cleaned inside & out",
+      "Light scent application",
     ],
     complete: [
       "Everything in Essential",
@@ -218,6 +219,15 @@
       if (!ul) return;
       var lines =
         Array.isArray(pb[key]) && pb[key].length > 0 ? pb[key] : FALLBACK_PACKAGE_BULLETS[key];
+      if (
+        key === "essential" &&
+        Array.isArray(lines) &&
+        !lines.some(function (line) {
+          return String(line).trim().toLowerCase() === "light scent application";
+        })
+      ) {
+        lines = lines.concat(["Light scent application"]);
+      }
       if (!lines || !lines.length) return;
       ul.innerHTML = "";
       lines.forEach(function (line) {

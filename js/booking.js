@@ -20,6 +20,8 @@
   var doneTextEl = document.getElementById("booking-done-text");
   var summaryText = document.getElementById("booking-summary-text");
   var copyBtn = document.getElementById("booking-copy-summary");
+  var selectedServiceEls = document.querySelectorAll("[data-booking-selected-service]");
+  var selectedVehicleEls = document.querySelectorAll("[data-booking-selected-vehicle]");
 
   var vehYear = document.getElementById("veh-year");
   var vehMake = document.getElementById("veh-make");
@@ -444,6 +446,24 @@
     });
   }
 
+  function updateSelectionLabels() {
+    var checked = form.querySelector('input[name="service"]:checked');
+    var serviceLabel =
+      !checked || !checked.value
+        ? "None selected yet"
+        : serviceLabels[checked.value] || checked.value;
+    selectedServiceEls.forEach(function (el) {
+      el.textContent = serviceLabel;
+    });
+
+    var v = form.querySelector('input[name="vehicle"]:checked');
+    var vehicleLabel =
+      !v || !v.value ? "None selected yet" : vehicleLabels[v.value] || v.value;
+    selectedVehicleEls.forEach(function (el) {
+      el.textContent = vehicleLabel;
+    });
+  }
+
   function showStep(n) {
     currentStep = n;
     form.setAttribute("data-current-step", String(n));
@@ -456,6 +476,15 @@
     });
 
     btnBack.hidden = n <= 1;
+    if (n <= 1) {
+      btnBack.setAttribute("aria-hidden", "true");
+      btnBack.disabled = true;
+      btnBack.style.display = "none";
+    } else {
+      btnBack.setAttribute("aria-hidden", "false");
+      btnBack.disabled = false;
+      btnBack.style.display = "";
+    }
     btnNext.hidden = n >= TOTAL_STEPS;
     if (btnNext) {
       btnNext.setAttribute("aria-hidden", n >= TOTAL_STEPS ? "true" : "false");
@@ -471,6 +500,7 @@
     }
 
     updateProgress();
+    updateSelectionLabels();
     showError("");
 
     if (n === 4) {
@@ -643,6 +673,9 @@
         "cust-email",
         "cust-phone",
         "cust-address",
+        "cust-city",
+        "cust-state",
+        "cust-zip",
       ];
       for (var i = 0; i < req.length; i++) {
         var el = document.getElementById(req[i]);
@@ -684,6 +717,11 @@
       if (email && email.validity && !email.validity.valid) {
         email.focus();
         return "Please enter a valid email address.";
+      }
+      var zip = document.getElementById("cust-zip");
+      if (zip && !/^\d{5}(?:-\d{4})?$/.test(String(zip.value || "").trim())) {
+        zip.focus();
+        return "Please enter a valid ZIP code.";
       }
       return "";
     }
@@ -755,6 +793,15 @@
         custAddress: document.getElementById("cust-address")
           ? document.getElementById("cust-address").value
           : "",
+        custCity: document.getElementById("cust-city")
+          ? document.getElementById("cust-city").value
+          : "",
+        custState: document.getElementById("cust-state")
+          ? document.getElementById("cust-state").value
+          : "CO",
+        custZip: document.getElementById("cust-zip")
+          ? document.getElementById("cust-zip").value
+          : "",
         vehYear: vehYear ? vehYear.value : "",
         vehMake: vehMake ? vehMake.value : "",
         vehModel: vehModel ? vehModel.value : "",
@@ -785,6 +832,7 @@
         var r = form.querySelector('input[name="service"][value="' + data.service + '"]');
         if (r) r.checked = true;
       }
+      updateSelectionLabels();
       if (data.vehicle) {
         var rv = form.querySelector('input[name="vehicle"][value="' + data.vehicle + '"]');
         if (rv) rv.checked = true;
@@ -807,6 +855,9 @@
         "custEmail",
         "custPhone",
         "custAddress",
+        "custCity",
+        "custState",
+        "custZip",
         "vehColor",
         "custNotes",
       ];
@@ -816,6 +867,9 @@
         "cust-email",
         "cust-phone",
         "cust-address",
+        "cust-city",
+        "cust-state",
+        "cust-zip",
         "veh-color",
         "cust-notes",
       ];
@@ -894,6 +948,15 @@
     }).join(" ");
   }
 
+  function formatAddressFromFormData(fd) {
+    var street = String(fd.get("custAddress") || "").trim();
+    var city = String(fd.get("custCity") || "").trim();
+    var state = String(fd.get("custState") || "").trim();
+    var zip = String(fd.get("custZip") || "").trim();
+    var cityStateZip = [city, state, zip].filter(Boolean).join(", ");
+    return [street, cityStateZip].filter(Boolean).join(", ");
+  }
+
   function buildSummaryText() {
     var fd = new FormData(form);
     var service = fd.get("service");
@@ -929,7 +992,7 @@
     lines.push("Name: " + [firstName, lastName].filter(Boolean).join(" "));
     lines.push("Email: " + (fd.get("custEmail") || ""));
     lines.push("Phone: " + (fd.get("custPhone") || ""));
-    lines.push("Address: " + (fd.get("custAddress") || ""));
+    lines.push("Address: " + formatAddressFromFormData(fd));
     lines.push("");
     lines.push("Vehicle");
     lines.push(vehicleSummaryLine(fd));
@@ -1149,6 +1212,14 @@
     r.addEventListener("change", syncCheckoutUi);
   });
 
+  form.querySelectorAll('input[name="service"]').forEach(function (r) {
+    r.addEventListener("change", updateSelectionLabels);
+  });
+
+  form.querySelectorAll('input[name="vehicle"]').forEach(function (r) {
+    r.addEventListener("change", updateSelectionLabels);
+  });
+
   window.addEventListener("storage", function (event) {
     if (event.key === ADMIN_BLOCKS_KEY) {
       renderCalendar();
@@ -1174,6 +1245,7 @@
         var r = form.querySelector('input[name="service"][value="' + s + '"]');
         if (r) {
           r.checked = true;
+          updateSelectionLabels();
           if (!hadSavedState && currentStep === 1) {
             showStep(2);
           }
@@ -1195,6 +1267,7 @@
     showStep(1);
   }
   applyServiceFromUrl(hadSavedState);
+  updateSelectionLabels();
 
   /** Stain Spot Treatment only — opened via info button on book-flow */
   var addonInfoHtml = {
@@ -1242,14 +1315,18 @@
     var info = {
       essential:
         "<p><strong>Best fit</strong> Daily drivers that stay relatively clean—quick exterior refresh and light interior tidy between deeper details.</p>" +
+        "<p><strong>Typical duration</strong> 1-2 hours.</p>" +
         "<p><strong>Vehicle condition</strong> Works best with light dust, routine dirt, and manageable interiors. Heavy mud, thick pet hair, stains, smoke odor, or long-neglected cabins usually need more time or a higher package.</p>" +
+        "<p><strong>Included touch</strong> Light scent application is included by default.</p>" +
         "<p><strong>Pricing</strong> Package prices are <strong>starting points</strong>. We confirm scope on site; if your vehicle needs extra labor or products, we’ll discuss an updated quote before work begins.</p>",
       complete:
         "<p><strong>Best fit</strong> Customers who want a full interior shampoo or steam treatment <strong>and</strong> exterior decontamination and protection in one visit—our most popular all-in-one option.</p>" +
+        "<p><strong>Typical duration</strong> 2-4 hours.</p>" +
         "<p><strong>Vehicle condition</strong> Great for typical family wear, commuting grime, and seasonal buildup. Severe pet hair, biohazards, flood smells, or paint that needs correction may require a different scope or add-on time.</p>" +
         "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests—common for mobile detailers across Colorado.</p>",
       signature:
         "<p><strong>Best fit</strong> Enthusiasts and owners who want gloss and clarity dialed up—paint enhancement polish and optional ceramic-style protection, with trim and engine-bay finishing as needed.</p>" +
+        "<p><strong>Typical duration</strong> TBD until launch.</p>" +
         "<p><strong>Vehicle condition</strong> Paint is assessed in person: heavy swirls, sanding marks, or XXL vehicles change time and materials. We plan protection (including ceramic add-ons) around what we see at inspection.</p>" +
         "<p><strong>Pricing</strong> <strong>Final price</strong> depends on vehicle size, paint defects, and add-ons. We align with typical Denver-area correction and coating workflows—always confirmed after we’ve seen the car.</p>" +
         "<p><strong>Launch</strong> Signature booking opens in <strong>July 2027</strong>.</p>",

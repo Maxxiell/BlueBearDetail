@@ -73,8 +73,10 @@
                     <li>Wheels &amp; tires cleaned, tires dressed</li>
                     <li>Interior vacuum &amp; wipe-down</li>
                     <li>Glass cleaned inside &amp; out</li>
+                    <li>Light scent application</li>
                   </ul>
                   <span class="booking-card__starting-at">Starting at <strong>$119.99</strong></span>
+                  <span class="booking-card__duration"><span class="booking-card__duration-label">Duration</span> <span class="booking-card__duration-value">1-2 hrs</span></span>
                 </span>
               </label>
               <button type="button" class="booking-service-info-btn" data-booking-service-info="essential" aria-label="Essential package details">
@@ -95,6 +97,7 @@
                     <li>Exterior decontamination, sealant or wax protection</li>
                   </ul>
                   <span class="booking-card__starting-at">Starting at <strong>$249.99</strong></span>
+                  <span class="booking-card__duration"><span class="booking-card__duration-label">Duration</span> <span class="booking-card__duration-value">2-4 hrs</span></span>
                 </span>
               </label>
               <button type="button" class="booking-service-info-btn" data-booking-service-info="complete" aria-label="Complete package details">
@@ -114,6 +117,7 @@
                     <li>Engine bay &amp; trim dressings as needed</li>
                   </ul>
                   <span class="booking-card__starting-at">Starting at <strong>$339.99</strong></span>
+                  <span class="booking-card__duration"><span class="booking-card__duration-label">Duration</span> <span class="booking-card__duration-value">TBD</span></span>
                   <span class="booking-card__coming-soon">Coming July 2026</span>
                 </span>
               </div>
@@ -127,6 +131,9 @@
         <div class="booking-step" data-step="2" id="booking-step-2" hidden>
           <h2 class="booking-step__title">Vehicle type</h2>
           <p class="booking-step__hint">Select the type that best matches your vehicle.</p>
+          <p class="booking-step__selected-service" aria-live="polite">
+            Selected service: <strong data-booking-selected-service>None selected yet</strong>
+          </p>
           <div class="booking-choice-grid booking-choice-grid--vehicle" role="radiogroup" aria-label="Vehicle type">
             <label class="booking-card">
               <input type="radio" name="vehicle" value="sedan-coupe" required>
@@ -161,6 +168,9 @@
         <div class="booking-step" data-step="3" id="booking-step-3" hidden>
           <h2 class="booking-step__title">Add-ons</h2>
           <p class="booking-step__hint">Optional extras — prices reflect typical Denver-area mobile detail add-on rates; <strong>final cost is confirmed on inspection</strong> (vehicle size &amp; condition can change labor). <strong>Spray Wax Protection</strong>, <strong>Pet Hair Removal</strong>, and <strong>Stain Spot Treatment</strong> are already included in the Complete package (choose them below if you booked Essential, or if you need extra scope beyond what your package includes).</p>
+          <p class="booking-step__selected-service" aria-live="polite">
+            Selected service: <strong data-booking-selected-service>None selected yet</strong> · Vehicle: <strong data-booking-selected-vehicle>None selected yet</strong>
+          </p>
           <div class="booking-addon-grid">
             <label class="booking-addon-card">
               <span class="booking-addon-card__inner">
@@ -168,6 +178,7 @@
                   <span class="booking-addon-card__name">Spray Wax Protection</span>
                   <span class="booking-addon-card__note">Already included in the Complete package.</span>
                   <span class="booking-addon-card__price">+$35</span>
+                  <span class="booking-addon-card__duration">Duration: 30 min</span>
                 </span>
                 <span class="container booking-addon-card__check">
                   <input type="checkbox" name="addon" value="spray-wax">
@@ -181,6 +192,7 @@
                   <span class="booking-addon-card__name">Pet Hair Removal</span>
                   <span class="booking-addon-card__note">Already included in the Complete package.</span>
                   <span class="booking-addon-card__price">+$59 <span class="booking-addon-card__price-note">from</span></span>
+                  <span class="booking-addon-card__duration">Duration: ~1-2 hrs</span>
                 </span>
                 <span class="container booking-addon-card__check">
                   <input type="checkbox" name="addon" value="pet-hair">
@@ -193,6 +205,7 @@
                 <span class="booking-addon-card__text">
                   <span class="booking-addon-card__name">Leather Condition &amp; Protection</span>
                   <span class="booking-addon-card__price">+$45</span>
+                  <span class="booking-addon-card__duration">Duration: 20 min</span>
                 </span>
                 <span class="container booking-addon-card__check">
                   <input type="checkbox" name="addon" value="leather-condition">
@@ -206,6 +219,7 @@
                   <span class="booking-addon-card__text booking-addon-card__text--with-side-info">
                     <span class="booking-addon-card__name">Stain Spot Treatment</span>
                     <span class="booking-addon-card__price">+$50</span>
+                    <span class="booking-addon-card__duration">Duration: ~30 min</span>
                   </span>
                   <span class="container booking-addon-card__check">
                     <input type="checkbox" name="addon" value="light-stain-spot-treatment">
@@ -222,6 +236,7 @@
                 <span class="booking-addon-card__text">
                   <span class="booking-addon-card__name">Headliner Cleaning</span>
                   <span class="booking-addon-card__price">+$40</span>
+                  <span class="booking-addon-card__duration">Duration: ~20 min</span>
                 </span>
                 <span class="container booking-addon-card__check">
                   <input type="checkbox" name="addon" value="headliner-cleaning">
@@ -234,6 +249,7 @@
                 <span class="booking-addon-card__text">
                   <span class="booking-addon-card__name">Carpet Shampoo</span>
                   <span class="booking-addon-card__price">+$75 <span class="booking-addon-card__price-note">from</span></span>
+                  <span class="booking-addon-card__duration">Duration: ~45 min</span>
                 </span>
                 <span class="container booking-addon-card__check">
                   <input type="checkbox" name="addon" value="carpet-shampoo">
@@ -247,6 +263,9 @@
         <div class="booking-step" data-step="4" id="booking-step-4" hidden>
           <h2 class="booking-step__title">Date &amp; time</h2>
           <p class="booking-step__hint">Pick a day on the calendar, then choose a start time (7:00 AM–5:00 PM). We’ll confirm availability.</p>
+          <p class="booking-step__selected-service" aria-live="polite">
+            Selected service: <strong data-booking-selected-service>None selected yet</strong> · Vehicle: <strong data-booking-selected-vehicle>None selected yet</strong>
+          </p>
           <div class="booking-schedule booking-schedule--split">
             <div class="booking-calendar-panel" aria-label="Calendar">
               <div class="booking-calendar__header">
@@ -308,8 +327,22 @@
               <input id="cust-phone" name="custPhone" type="tel" autocomplete="tel" required>
             </div>
             <div class="booking-fields__full">
-              <label for="cust-address">Service address</label>
-              <input id="cust-address" name="custAddress" type="text" autocomplete="street-address" required placeholder="Street, city, ZIP">
+              <label for="cust-address">Street address</label>
+              <input id="cust-address" name="custAddress" type="text" autocomplete="street-address" required placeholder="Street address">
+            </div>
+            <div>
+              <label for="cust-city">City</label>
+              <input id="cust-city" name="custCity" type="text" autocomplete="address-level2" required placeholder="City">
+            </div>
+            <div>
+              <label for="cust-state">State</label>
+              <select id="cust-state" name="custState" autocomplete="address-level1" required>
+                <option value="CO" selected>Colorado</option>
+              </select>
+            </div>
+            <div>
+              <label for="cust-zip">ZIP code</label>
+              <input id="cust-zip" name="custZip" type="text" inputmode="numeric" autocomplete="postal-code" required placeholder="ZIP code">
             </div>
             <div>
               <label for="veh-year">Vehicle year</label>

@@ -3,3 +3,7 @@
 [functions.send-booking-email]
 # Allow booking flow for guests (no login). Abuse is limited by booking_id + recent created_at in the function.
 verify_jwt = false
+
+[functions.send-contact-email]
+# Allow contact form submissions from the public site (no login).
+verify_jwt = false

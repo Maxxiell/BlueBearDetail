@@ -458,6 +458,15 @@ const ADDON_BASE_PRICES: Record<string, number> = {
   "carpet-shampoo": 75,
 };
 
+const ADDON_LABELS: Record<string, string> = {
+  "spray-wax": "Spray Wax Protection",
+  "pet-hair": "Pet Hair Removal",
+  "leather-condition": "Leather Condition & Protection",
+  "light-stain-spot-treatment": "Stain Spot Treatment",
+  "headliner-cleaning": "Headliner Cleaning",
+  "carpet-shampoo": "Carpet Shampoo",
+};
+
 type OwnerEmailFields = {
   refShort: string;
   bookingDate: string;
@@ -482,6 +491,10 @@ function money(n: number): string {
   return `$${n.toFixed(2)}`;
 }
 
+function addonLabel(key: string): string {
+  return ADDON_LABELS[key] || key.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function buildOwnerBookingText(f: OwnerEmailFields): string {
   const addons = parseAddonArray(f.addons);
   const serviceCost = SERVICE_BASE_PRICES[f.servicePackage] ?? 0;
@@ -503,7 +516,7 @@ function buildOwnerBookingText(f: OwnerEmailFields): string {
   lines.push(`- Service base: ${money(serviceCost)}`);
   if (addons.length) {
     addons.forEach((key) => {
-      lines.push(`- Add-on (${key}): ${money(ADDON_BASE_PRICES[key] ?? 0)}`);
+      lines.push(`- Add-on (${addonLabel(key)}): ${money(ADDON_BASE_PRICES[key] ?? 0)}`);
     });
   }
   lines.push(`- Estimated total: ${money(estimateTotal)}`);
@@ -518,12 +531,18 @@ function buildOwnerBookingHtml(f: OwnerEmailFields): string {
   const serviceCost = SERVICE_BASE_PRICES[f.servicePackage] ?? 0;
   const addOnTotal = addons.reduce((sum, key) => sum + (ADDON_BASE_PRICES[key] ?? 0), 0);
   const estimateTotal = serviceCost + addOnTotal;
-  const addOnRows = addons
-    .map((key) => {
-      const label = escapeHtml(key.replace(/-/g, " "));
-      return `<tr><td style="padding:8px 10px;border:1px solid #d1d5db;">Add-on: ${label}</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;">${money(ADDON_BASE_PRICES[key] ?? 0)}</td></tr>`;
-    })
-    .join("");
+  const addOnRows = addons.length
+    ? addons
+        .map((key) => {
+          return `<tr><td style="padding:10px 12px;border-bottom:1px solid #1f2937;color:#d1d5db;">${escapeHtml(
+            addonLabel(key)
+          )}</td><td style="padding:10px 12px;border-bottom:1px solid #1f2937;text-align:right;color:#f9fafb;font-weight:600;">${money(
+            ADDON_BASE_PRICES[key] ?? 0
+          )}</td></tr>`;
+        })
+        .join("")
+    : `<tr><td colspan="2" style="padding:10px 12px;color:#9ca3af;">No add-ons selected</td></tr>`;
+
   const details = [
     ["Reference", f.refShort],
     ["Customer", f.customerName],
@@ -534,26 +553,46 @@ function buildOwnerBookingHtml(f: OwnerEmailFields): string {
     ["Time", f.bookingTime ? formatTime12h(f.bookingTime) : "—"],
     ["Service", f.servicePackage ? formatService(f.servicePackage) : "—"],
     ["Vehicle", f.vehicleType ? formatVehicle(f.vehicleType) : "—"],
-  ]
-    .map(
-      ([k, v]) =>
-        `<tr><td style="padding:8px 10px;border:1px solid #d1d5db;background:#f8fafc;font-weight:600;">${escapeHtml(k)}</td><td style="padding:8px 10px;border:1px solid #d1d5db;">${escapeHtml(v)}</td></tr>`
-    )
+  ].map(
+    ([k, v]) =>
+      `<tr><td style="padding:9px 12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;font-size:11px;border-bottom:1px solid #1f2937;width:34%;">${escapeHtml(
+        k
+      )}</td><td style="padding:9px 12px;color:#f3f4f6;border-bottom:1px solid #1f2937;">${escapeHtml(v)}</td></tr>`
+  )
     .join("");
 
   return `<!doctype html>
-<html><body style="font-family:Arial,sans-serif;background:#f3f4f6;margin:0;padding:20px;color:#111827;">
-  <div style="max-width:680px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;">
-    <h2 style="margin:0 0 12px 0;">New booking request ${escapeHtml(f.refShort)}</h2>
-    <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">${details}</table>
-    <h3 style="margin:0 0 8px 0;">Invoice estimate</h3>
-    <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">
-      <tr><td style="padding:8px 10px;border:1px solid #d1d5db;">Service base</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;">${money(serviceCost)}</td></tr>
-      ${addOnRows}
-      <tr><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:700;">Estimated total</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700;">${money(estimateTotal)}</td></tr>
-    </table>
-    <h3 style="margin:0 0 8px 0;">Submitted summary</h3>
-    <pre style="white-space:pre-wrap;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:0;">${escapeHtml(f.summaryText || "(none)")}</pre>
+<html lang="en">
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#020617;margin:0;padding:22px;color:#e5e7eb;">
+  <div style="max-width:700px;margin:0 auto;background:#0b1220;border:1px solid #1e293b;border-radius:14px;overflow:hidden;box-shadow:0 20px 48px rgba(0,0,0,0.38);">
+    <div style="padding:18px 20px;background:linear-gradient(120deg,#0b3868 0%,#0a1f3b 100%);border-bottom:1px solid #1e3a5f;">
+      <p style="margin:0 0 6px 0;font-size:11px;letter-spacing:0.13em;color:#bfdbfe;text-transform:uppercase;">Blue Bear Detail</p>
+      <h2 style="margin:0;font-size:22px;line-height:1.2;color:#ffffff;">New booking request</h2>
+      <p style="margin:10px 0 0 0;font-size:13px;color:#dbeafe;">Reference <span style="display:inline-block;margin-left:6px;padding:4px 10px;border-radius:999px;background:#020617;border:1px solid #3b82f6;color:#93c5fd;font-weight:700;letter-spacing:0.08em;">${escapeHtml(
+        f.refShort
+      )}</span></p>
+    </div>
+    <div style="padding:18px 20px 20px 20px;">
+      <h3 style="margin:0 0 10px 0;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;color:#93c5fd;">Request details</h3>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;border:1px solid #1f2937;border-radius:10px;overflow:hidden;">
+        ${details}
+      </table>
+      <h3 style="margin:0 0 10px 0;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;color:#93c5fd;">Estimate snapshot</h3>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;border:1px solid #1f2937;border-radius:10px;overflow:hidden;">
+        <tr><td style="padding:10px 12px;border-bottom:1px solid #1f2937;color:#d1d5db;">Service base</td><td style="padding:10px 12px;border-bottom:1px solid #1f2937;text-align:right;color:#f9fafb;font-weight:600;">${money(
+          serviceCost
+        )}</td></tr>
+        ${addOnRows}
+        <tr><td style="padding:11px 12px;color:#ffffff;font-weight:700;border-top:1px solid #334155;">Estimated total</td><td style="padding:11px 12px;text-align:right;color:#ffffff;font-weight:700;border-top:1px solid #334155;">${money(
+          estimateTotal
+        )}</td></tr>
+      </table>
+      <h3 style="margin:0 0 8px 0;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;color:#93c5fd;">Submitted summary</h3>
+      <pre style="white-space:pre-wrap;background:#020617;border:1px solid #1f2937;border-radius:10px;padding:12px;margin:0;color:#e5e7eb;line-height:1.5;">${escapeHtml(
+        f.summaryText || "(none)"
+      )}</pre>
+    </div>
   </div>
-</body></html>`;
+</body>
+</html>`;
 }

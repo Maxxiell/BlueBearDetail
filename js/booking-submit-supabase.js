@@ -62,6 +62,12 @@ async function submitBookAppointmentInner(form, summaryText) {
 
   var bookingId = newBookingId();
   var referenceCode = newReferenceCode();
+  var street = String(fd.get("custAddress") || "").trim();
+  var city = String(fd.get("custCity") || "").trim();
+  var state = String(fd.get("custState") || "").trim();
+  var zip = String(fd.get("custZip") || "").trim();
+  var cityStateZip = [city, state, zip].filter(Boolean).join(", ");
+  var fullAddress = [street, cityStateZip].filter(Boolean).join(", ");
 
   var row = {
     id: bookingId,
@@ -79,7 +85,7 @@ async function submitBookAppointmentInner(form, summaryText) {
       .trim()
       .toLowerCase(),
     cust_phone: String(fd.get("custPhone") || "").trim(),
-    cust_address: String(fd.get("custAddress") || "").trim(),
+    cust_address: fullAddress,
     veh_year: year,
     veh_make: String(fd.get("vehMake") || "").trim(),
     veh_model: String(fd.get("vehModel") || "").trim(),
