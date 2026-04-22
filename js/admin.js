@@ -2,6 +2,7 @@ import { supabase } from "./auth-client.js";
 import { isSupabaseConfigured } from "./supabase-config.js";
 
 (async () => {
+  const PROMO_DEFAULT_TEXT = "15% OFF FOR NEW CUSTOMERS THROUGH MAY 1ST";
   const ADMIN_AUTH_KEY = "bbdAdminAuth";
   const ADMIN_EMAIL_ALLOWED = "deleteddata@outlook.com";
   const BLOCKS_KEY = "bbdAdminBlockedSchedule";
@@ -218,7 +219,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       "Exterior decontamination, sealant or wax protection",
     ],
     signature: [
-      "Everything in Complete",
+      "Includes exterior wash | paint prep",
       "Paint enhancement polish to reduce swirls & boost gloss",
       "Ceramic coating add-on available",
       "Engine bay & trim dressings as needed",
@@ -1036,7 +1037,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
           enabled: promoEnabledInput ? promoEnabledInput.checked : true,
           discountPct: Math.max(0, Math.min(100, discountPct)),
           code: String(promoCode?.value || "").trim() || "WASH15",
-          text: String(promoText?.value || "").trim() || "15% FOR NEW CUSTOMERS",
+          text: String(promoText?.value || "").trim() || PROMO_DEFAULT_TEXT,
         },
         packageBullets: {
           essential: parseBulletLines(packageBulletsEssential),

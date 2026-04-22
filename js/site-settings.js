@@ -1,7 +1,7 @@
 (function () {
   var SITE_SETTINGS_KEY = "bbdSiteSettings";
   var STORE_NAME = "bbdPersistentStore";
-  var FALLBACK_BASE_PRICES = { essential: 119.99, complete: 249.99, signature: 339.99 };
+  var FALLBACK_BASE_PRICES = { essential: 119.99, complete: 249.99, signature: 369.99 };
   var FALLBACK_PACKAGE_BULLETS = {
     essential: [
       "Exterior hand wash & dry",
@@ -17,7 +17,7 @@
       "Exterior decontamination, sealant or wax protection",
     ],
     signature: [
-      "Everything in Complete",
+      "Includes exterior wash | paint prep",
       "Paint enhancement polish to reduce swirls & boost gloss",
       "Ceramic coating add-on available",
       "Engine bay & trim dressings as needed",
@@ -25,6 +25,22 @@
   };
 
   var CARD_PROMO_LABEL = "With Promo";
+  var PROMO_DEFAULT_TEXT = "15% OFF FOR NEW CUSTOMERS THROUGH MAY 1ST";
+
+  function normalizePromoText(raw) {
+    var txt = String(raw || "").trim();
+    if (!txt) return PROMO_DEFAULT_TEXT;
+    var upper = txt.toUpperCase();
+    if (
+      upper === "15% FOR NEW CUSTOMERS" ||
+      upper === "15% FOR NEW CUSTOMER THROUGH MAY 1ST" ||
+      upper === "15% OFF FOR NEW CUSTOMERS" ||
+      upper === "15% OFF FOR NEW CUSTOMER THROUGH MAY 1ST"
+    ) {
+      return PROMO_DEFAULT_TEXT;
+    }
+    return txt;
+  }
 
   function createPersistentStore() {
     var COOKIE_PREFIX = "bbdps_";
@@ -251,8 +267,7 @@
     if (Number.isNaN(discount)) discount = 15;
     discount = Math.max(0, Math.min(100, discount));
 
-    var promoText =
-      typeof promo.text === "string" && promo.text.trim() ? promo.text.trim() : "15% FOR NEW CUSTOMERS";
+    var promoText = normalizePromoText(promo.text);
     var fullMarquee = promoText;
 
     var main = document.querySelector("main.page-services");
@@ -279,6 +294,10 @@
 
       var base = Number(pricing[key]);
       if (Number.isNaN(base) || base <= 0) base = FALLBACK_BASE_PRICES[key] || 0;
+      // Backward-compat: older saved settings may still have the retired Signature base price.
+      if (key === "signature" && Math.abs(base - 339.99) < 0.001) {
+        base = 369.99;
+      }
 
       var discounted = base * (1 - discount / 100);
 

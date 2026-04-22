@@ -446,7 +446,7 @@ function rowHtmlDark(label: string, value: string, bg: string, muted: string): s
 const SERVICE_BASE_PRICES: Record<string, number> = {
   essential: 119.99,
   complete: 249.99,
-  signature: 339.99,
+  signature: 369.99,
 };
 
 const ADDON_BASE_PRICES: Record<string, number> = {

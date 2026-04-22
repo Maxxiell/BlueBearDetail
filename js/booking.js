@@ -1428,7 +1428,7 @@
         "<p><strong>Best fit</strong> for enthusiasts and owners who want gloss and clarity dialed up.</p>" +
         "<p><strong>Vehicle condition</strong> Paint is assessed in person: heavy swirls, sanding marks, or XXL vehicles change time and materials. We plan protection (including ceramic add-ons) around what we see at inspection.</p>" +
         "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests.</p>" +
-        "<p><strong>Launch</strong> Signature booking opens in <strong>July 2027</strong>.</p>",
+        "<p><strong>Launch</strong> Signature booking opens in <strong>July 2026</strong>.</p>",
     };
 
     document.querySelectorAll("[data-booking-service-info]").forEach(function (btn) {

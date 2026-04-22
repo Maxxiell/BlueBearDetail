@@ -923,6 +923,7 @@ a:hover {
   padding: 18px 30px;
   font-size: 1.2rem;
   letter-spacing: 0.1em;
+  border-radius: 10px;
 }
 
 @media (min-width: 480px) {
@@ -1015,6 +1016,13 @@ a:hover {
 
 .services-card--brand .button.button--cta-lg:hover {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.88);
+}
+
+/* Match index "View services" radius to hero "Book Today". */
+.services-card--brand .button.button--cta-lg,
+.services-card--brand .button.button--cta-lg:before,
+.services-card--brand .button.button--cta-lg:after {
+  border-radius: 10px;
 }
 
 /* Map */
