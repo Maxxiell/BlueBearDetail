@@ -53,8 +53,11 @@
 
   var STORAGE_KEY = "bbdBookingWizard";
   var ADMIN_BLOCKS_KEY = "bbdAdminBlockedSchedule";
+  var SITE_SETTINGS_KEY = "bbdSiteSettings";
   var TOTAL_STEPS = 6;
   var MAILTO = "hello@bluebearautocare.com";
+  var SERVICE_BLOCK_MINS = { essential: 180, complete: 240 };
+  var activeSupabaseModulePromise = null;
   var store =
     window.bbdPersistentStore &&
     typeof window.bbdPersistentStore.getItem === "function"
@@ -118,7 +121,7 @@
 
   function allHalfHourSlots() {
     var out = [];
-    for (var t = 7 * 60; t <= 17 * 60; t += 30) {
+    for (var t = 6 * 60; t <= 17 * 60; t += 30) {
       var h = Math.floor(t / 60);
       var m = t % 60;
       out.push(
@@ -138,7 +141,28 @@
     return h12 + ":" + m + " " + ampm;
   }
 
-  function fetchBookedSlots(dateStr) {
+  function getSupabaseModule() {
+    if (activeSupabaseModulePromise) return activeSupabaseModulePromise;
+    activeSupabaseModulePromise = Promise.all([
+      import(new URL("auth-client.js", bookingSubmitModuleUrl()).href),
+      import(new URL("supabase-config.js", bookingSubmitModuleUrl()).href),
+    ])
+      .then(function (mods) {
+        return {
+          supabase: mods[0].supabase,
+          isConfigured:
+            typeof mods[1].isSupabaseConfigured === "function"
+              ? mods[1].isSupabaseConfigured()
+              : false,
+        };
+      })
+      .catch(function () {
+        return { supabase: null, isConfigured: false };
+      });
+    return activeSupabaseModulePromise;
+  }
+
+  async function fetchBookedSlots(dateStr) {
     var blocks = readAdminBlocks();
     var ranges = (blocks.timeRangesByDate && blocks.timeRangesByDate[dateStr]) || [];
     var all = allHalfHourSlots();
@@ -148,7 +172,38 @@
         return slotMins >= range.startMins && slotMins < range.endMins;
       });
     });
-    return Promise.resolve(blocked);
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return blocked;
+
+    try {
+      var supa = await getSupabaseModule();
+      if (!supa || !supa.isConfigured || !supa.supabase) return blocked;
+      var res = await supa.supabase
+        .from("bookings")
+        .select("booking_time,service_package,status")
+        .eq("booking_date", dateStr);
+      if (res.error || !Array.isArray(res.data)) return blocked;
+
+      var fromBookings = [];
+      res.data.forEach(function (row) {
+        if (!row || String(row.status || "").toLowerCase() === "cancelled") return;
+        var startMins = parseTimeToMins(String(row.booking_time || ""));
+        if (startMins == null) return;
+        var mins = SERVICE_BLOCK_MINS[String(row.service_package || "").toLowerCase()] || 180;
+        var endMins = startMins + mins;
+        all.forEach(function (slot) {
+          var sm = slotToMinutes(slot);
+          if (sm >= startMins && sm < endMins) fromBookings.push(slot);
+        });
+      });
+
+      var seen = {};
+      blocked.concat(fromBookings).forEach(function (slot) {
+        seen[slot] = true;
+      });
+      return Object.keys(seen).sort();
+    } catch (_e) {
+      return blocked;
+    }
   }
 
   function safeUniqueIsoDates(list) {
@@ -175,43 +230,58 @@
     return h * 60 + m;
   }
 
+  function readAdminBlocksFromShape(shape) {
+    var blockedDates = safeUniqueIsoDates(shape.blockedDates);
+    var timeRangesByDate = {};
+
+    if (shape.timeRangesByDate && typeof shape.timeRangesByDate === "object") {
+      Object.keys(shape.timeRangesByDate).forEach(function (dateKey) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return;
+        var ranges = shape.timeRangesByDate[dateKey];
+        if (!Array.isArray(ranges) || !ranges.length) return;
+        var norm = ranges
+          .map(function (r) {
+            var startMins = parseTimeToMins(r.start);
+            var endMins = parseTimeToMins(r.end);
+            if (startMins == null || endMins == null || endMins <= startMins) return null;
+            return { start: r.start, end: r.end, startMins: startMins, endMins: endMins };
+          })
+          .filter(Boolean);
+        var deduped = [];
+        var seen = {};
+        norm.forEach(function (item) {
+          var k = item.start + "|" + item.end;
+          if (seen[k]) return;
+          seen[k] = true;
+          deduped.push(item);
+        });
+        if (deduped.length) {
+          timeRangesByDate[dateKey] = deduped;
+        }
+      });
+    }
+
+    return { blockedDates: blockedDates, timeRangesByDate: timeRangesByDate };
+  }
+
   function readAdminBlocks() {
     var empty = { blockedDates: [], timeRangesByDate: {} };
     try {
+      var settingsRaw = store.getItem(SITE_SETTINGS_KEY);
+      if (settingsRaw) {
+        var parsedSettings = JSON.parse(settingsRaw);
+        var remoteBlocks = parsedSettings && parsedSettings.bookingBlocks;
+        if (remoteBlocks && typeof remoteBlocks === "object") {
+          return readAdminBlocksFromShape({
+            blockedDates: remoteBlocks.blockedDates,
+            timeRangesByDate: remoteBlocks.timeRangesByDate,
+          });
+        }
+      }
       var raw = store.getItem(ADMIN_BLOCKS_KEY);
       if (!raw) return empty;
       var parsed = JSON.parse(raw);
-      var blockedDates = safeUniqueIsoDates(parsed.blockedDates);
-      var timeRangesByDate = {};
-
-      if (parsed.timeRangesByDate && typeof parsed.timeRangesByDate === "object") {
-        Object.keys(parsed.timeRangesByDate).forEach(function (dateKey) {
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return;
-          var ranges = parsed.timeRangesByDate[dateKey];
-          if (!Array.isArray(ranges) || !ranges.length) return;
-          var norm = ranges
-            .map(function (r) {
-              var startMins = parseTimeToMins(r.start);
-              var endMins = parseTimeToMins(r.end);
-              if (startMins == null || endMins == null || endMins <= startMins) return null;
-              return { start: r.start, end: r.end, startMins: startMins, endMins: endMins };
-            })
-            .filter(Boolean);
-          var deduped = [];
-          var seen = {};
-          norm.forEach(function (item) {
-            var k = item.start + "|" + item.end;
-            if (seen[k]) return;
-            seen[k] = true;
-            deduped.push(item);
-          });
-          if (deduped.length) {
-            timeRangesByDate[dateKey] = deduped;
-          }
-        });
-      }
-
-      return { blockedDates: blockedDates, timeRangesByDate: timeRangesByDate };
+      return readAdminBlocksFromShape(parsed);
     } catch (_e) {
       return empty;
     }
@@ -1221,10 +1291,15 @@
   });
 
   window.addEventListener("storage", function (event) {
-    if (event.key === ADMIN_BLOCKS_KEY) {
+    if (event.key === ADMIN_BLOCKS_KEY || event.key === SITE_SETTINGS_KEY) {
       renderCalendar();
       refreshTimeForDate();
     }
+  });
+
+  window.addEventListener("bbd:site-settings-updated", function () {
+    renderCalendar();
+    refreshTimeForDate();
   });
 
   document.addEventListener("visibilitychange", function () {
@@ -1233,6 +1308,33 @@
       refreshTimeForDate();
     }
   });
+
+  function initRealtimeAvailabilitySync() {
+    getSupabaseModule().then(function (supa) {
+      if (!supa || !supa.isConfigured || !supa.supabase) return;
+      try {
+        supa.supabase
+          .channel("booking-live-availability")
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "bookings" },
+            function () {
+              renderCalendar();
+              refreshTimeForDate();
+            }
+          )
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "site_settings", filter: "id=eq.default" },
+            function () {
+              renderCalendar();
+              refreshTimeForDate();
+            }
+          )
+          .subscribe();
+      } catch (_e) {}
+    });
+  }
 
   function applyServiceFromUrl(hadSavedState) {
     try {
@@ -1268,6 +1370,7 @@
   }
   applyServiceFromUrl(hadSavedState);
   updateSelectionLabels();
+  initRealtimeAvailabilitySync();
 
   /** Stain Spot Treatment only — opened via info button on book-flow */
   var addonInfoHtml = {
@@ -1314,21 +1417,17 @@
 
     var info = {
       essential:
-        "<p><strong>Best fit</strong> Daily drivers that stay relatively clean—quick exterior refresh and light interior tidy between deeper details.</p>" +
-        "<p><strong>Typical duration</strong> 1-2 hours.</p>" +
-        "<p><strong>Vehicle condition</strong> Works best with light dust, routine dirt, and manageable interiors. Heavy mud, thick pet hair, stains, smoke odor, or long-neglected cabins usually need more time or a higher package.</p>" +
-        "<p><strong>Included touch</strong> Light scent application is included by default.</p>" +
-        "<p><strong>Pricing</strong> Package prices are <strong>starting points</strong>. We confirm scope on site; if your vehicle needs extra labor or products, we’ll discuss an updated quote before work begins.</p>",
+        "<p><strong>Best fit</strong> for daily drivers that need a quick exterior and interior refresh between deeper details.</p>" +
+        "<p><strong>Vehicle condition</strong> Works best with light dust, routine dirt, and manageable interiors.</p>" +
+        "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests.</p>",
       complete:
-        "<p><strong>Best fit</strong> Customers who want a full interior shampoo or steam treatment <strong>and</strong> exterior decontamination and protection in one visit—our most popular all-in-one option.</p>" +
-        "<p><strong>Typical duration</strong> 2-4 hours.</p>" +
-        "<p><strong>Vehicle condition</strong> Great for typical family wear, commuting grime, and seasonal buildup. Severe pet hair, biohazards, flood smells, or paint that needs correction may require a different scope or add-on time.</p>" +
-        "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests—common for mobile detailers across Colorado.</p>",
+        "<p><strong>Best fit</strong> for when your vehicle needs some TLC&lt;3. Our most popular all-in-one option full interior and exterior clean.</p>" +
+        "<p><strong>Vehicle condition</strong> Great for typical family wear, commuting grime, and seasonal buildup. Pet hair, heavy odors or set-in stains may require add-on time.</p>" +
+        "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests.</p>",
       signature:
-        "<p><strong>Best fit</strong> Enthusiasts and owners who want gloss and clarity dialed up—paint enhancement polish and optional ceramic-style protection, with trim and engine-bay finishing as needed.</p>" +
-        "<p><strong>Typical duration</strong> TBD until launch.</p>" +
+        "<p><strong>Best fit</strong> for enthusiasts and owners who want gloss and clarity dialed up.</p>" +
         "<p><strong>Vehicle condition</strong> Paint is assessed in person: heavy swirls, sanding marks, or XXL vehicles change time and materials. We plan protection (including ceramic add-ons) around what we see at inspection.</p>" +
-        "<p><strong>Pricing</strong> <strong>Final price</strong> depends on vehicle size, paint defects, and add-ons. We align with typical Denver-area correction and coating workflows—always confirmed after we’ve seen the car.</p>" +
+        "<p><strong>Pricing</strong> Listed pricing assumes a standard condition vehicle. After inspection, we may adjust for size, soil level, or special requests.</p>" +
         "<p><strong>Launch</strong> Signature booking opens in <strong>July 2027</strong>.</p>",
     };
 

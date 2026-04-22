@@ -20,3 +20,17 @@ create policy "bookings_select_authenticated"
     or user_id = auth.uid()
     or lower(trim(cust_email)) = lower(trim(coalesce((auth.jwt() ->> 'email'), '')))
   );
+
+-- Public calendar availability on booking flow:
+-- allows anon/authenticated reads so the site can compute blocked time windows live.
+drop policy if exists "bookings_select_public_availability" on public.bookings;
+create policy "bookings_select_public_availability"
+  on public.bookings for select to anon, authenticated
+  using (true);
+
+-- Staff admin can update booking status (e.g. cancel a request).
+drop policy if exists "bookings_update_admin" on public.bookings;
+create policy "bookings_update_admin"
+  on public.bookings for update to authenticated
+  using ((auth.jwt() ->> 'email') ilike 'deleteddata@outlook.com')
+  with check ((auth.jwt() ->> 'email') ilike 'deleteddata@outlook.com');

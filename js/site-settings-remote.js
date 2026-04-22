@@ -16,5 +16,28 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     if (typeof payload !== "object" || payload === null) return;
     if (Object.keys(payload).length === 0) return;
     merge(payload);
+    window.dispatchEvent(new CustomEvent("bbd:site-settings-updated"));
+  } catch (_e) {}
+
+  try {
+    var channel = supabase
+      .channel("site-settings-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "site_settings",
+          filter: "id=eq.default",
+        },
+        function (evt) {
+          var row = evt && evt.new ? evt.new : null;
+          var settings = row && row.settings ? row.settings : null;
+          if (!settings || typeof settings !== "object") return;
+          merge(settings);
+          window.dispatchEvent(new CustomEvent("bbd:site-settings-updated"));
+        }
+      )
+      .subscribe();
   } catch (_e) {}
 })();

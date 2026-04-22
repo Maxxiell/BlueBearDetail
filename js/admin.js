@@ -366,6 +366,16 @@ import { isSupabaseConfigured } from "./supabase-config.js";
 
   function readBlocks() {
     try {
+      const settings = readSiteSettings();
+      if (settings.bookingBlocks && typeof settings.bookingBlocks === "object") {
+        return sanitizeBlocks({
+          blockedDates: Array.isArray(settings.bookingBlocks.blockedDates) ? settings.bookingBlocks.blockedDates : [],
+          timeRangesByDate:
+            settings.bookingBlocks.timeRangesByDate && typeof settings.bookingBlocks.timeRangesByDate === "object"
+              ? settings.bookingBlocks.timeRangesByDate
+              : {},
+        });
+      }
       const raw = store.getItem(BLOCKS_KEY);
       if (!raw) return { blockedDates: [], timeRangesByDate: {} };
       const data = JSON.parse(raw);
@@ -440,18 +450,20 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     return { blockedDates: cleanDates, timeRangesByDate: cleanRanges };
   }
 
-  function writeBlocks(data) {
-    store.setItem(BLOCKS_KEY, JSON.stringify(sanitizeBlocks(data)));
+  async function writeBlocks(data) {
+    const sanitized = sanitizeBlocks(data);
+    store.setItem(BLOCKS_KEY, JSON.stringify(sanitized));
+    await writeSiteSettings({ bookingBlocks: sanitized });
   }
 
-  function removeBlockedDate(date) {
+  async function removeBlockedDate(date) {
     const data = readBlocks();
     data.blockedDates = data.blockedDates.filter((d) => d !== date);
-    writeBlocks(data);
+    await writeBlocks(data);
     render();
   }
 
-  function removeRange(date, start, end) {
+  async function removeRange(date, start, end) {
     const data = readBlocks();
     const ranges = Array.isArray(data.timeRangesByDate[date]) ? data.timeRangesByDate[date] : [];
     const nextRanges = ranges.filter((range) => !(range.start === start && range.end === end));
@@ -462,7 +474,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     } else {
       delete data.timeRangesByDate[date];
     }
-    writeBlocks(data);
+    await writeBlocks(data);
     render();
   }
 
@@ -479,7 +491,9 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       btn.type = "button";
       btn.className = "btn btn-admin-ghost admin-list-remove";
       btn.textContent = "Remove";
-      btn.addEventListener("click", () => removeBlockedDate(date));
+      btn.addEventListener("click", () => {
+        void removeBlockedDate(date);
+      });
       li.appendChild(btn);
       dayList.appendChild(li);
     });
@@ -498,14 +512,16 @@ import { isSupabaseConfigured } from "./supabase-config.js";
         btn.type = "button";
         btn.className = "btn btn-admin-ghost admin-list-remove";
         btn.textContent = "Remove";
-        btn.addEventListener("click", () => removeRange(date, range.start, range.end));
+        btn.addEventListener("click", () => {
+          void removeRange(date, range.start, range.end);
+        });
         li.appendChild(btn);
         timeList.appendChild(li);
       });
     });
   }
 
-  dayAddBtn.addEventListener("click", () => {
+  dayAddBtn.addEventListener("click", async () => {
     const date = dayInput.value;
     if (!date) {
       adminToast("Select a date first.", "error");
@@ -515,12 +531,12 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     if (!data.blockedDates.includes(date)) {
       data.blockedDates.push(date);
       data.blockedDates.sort();
-      writeBlocks(data);
+      await writeBlocks(data);
     }
     render();
   });
 
-  timeAddBtn.addEventListener("click", () => {
+  timeAddBtn.addEventListener("click", async () => {
     const date = timeDateInput.value;
     const start = timeStartInput.value;
     const end = timeEndInput.value;
@@ -539,7 +555,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     ranges.push({ start, end });
     ranges.sort((a, b) => a.start.localeCompare(b.start));
     data.timeRangesByDate[date] = ranges;
-    writeBlocks(data);
+    await writeBlocks(data);
     render();
   });
 
@@ -931,18 +947,18 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     if (!adminBookingsBody) return;
     if (!isSupabaseConfigured()) {
       adminBookingsBody.innerHTML =
-        '<tr><td colspan="9" class="admin-empty">Connect Supabase in <code>js/supabase-config.js</code> to load bookings.</td></tr>';
+        '<tr><td colspan="10" class="admin-empty">Connect Supabase in <code>js/supabase-config.js</code> to load bookings.</td></tr>';
       return;
     }
     const { data, error } = await supabase
       .from("bookings")
       .select(
-        "reference_code,created_at,booking_date,booking_time,cust_first_name,cust_last_name,cust_email,cust_phone,service_package,status"
+        "id,reference_code,created_at,booking_date,booking_time,cust_first_name,cust_last_name,cust_email,cust_phone,service_package,status"
       )
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) {
-      adminBookingsBody.innerHTML = `<tr><td colspan="9" class="admin-empty">Could not load bookings: ${escapeHtml(
+      adminBookingsBody.innerHTML = `<tr><td colspan="10" class="admin-empty">Could not load bookings: ${escapeHtml(
         error.message || "error"
       )}. Run <code>supabase/bookings-reference-rls.sql</code> in the SQL editor if this is a new column/policy.</td></tr>`;
       return;
@@ -950,7 +966,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     const list = data || [];
     if (!list.length) {
       adminBookingsBody.innerHTML =
-        '<tr><td colspan="9" class="admin-empty">No booking requests yet.</td></tr>';
+        '<tr><td colspan="10" class="admin-empty">No booking requests yet.</td></tr>';
       return;
     }
     adminBookingsBody.innerHTML = list
@@ -968,9 +984,30 @@ import { isSupabaseConfigured } from "./supabase-config.js";
         const ph = escapeHtml(r.cust_phone || "—");
         const pkg = escapeHtml(r.service_package || "—");
         const st = escapeHtml(r.status || "—");
-        return `<tr><td>${ref}</td><td>${created}</td><td>${bd}</td><td>${bt}</td><td>${name}</td><td>${em}</td><td>${ph}</td><td>${pkg}</td><td>${st}</td></tr>`;
+        const canCancel = String(r.status || "").toLowerCase() !== "cancelled";
+        const actions = canCancel
+          ? `<button type="button" class="btn btn-admin-ghost" data-booking-cancel="${escapeHtml(String(r.id || ""))}">Cancel</button>`
+          : '<span class="admin-refund-done">—</span>';
+        return `<tr><td>${ref}</td><td>${created}</td><td>${bd}</td><td>${bt}</td><td>${name}</td><td>${em}</td><td>${ph}</td><td>${pkg}</td><td>${st}</td><td class="admin-table-actions">${actions}</td></tr>`;
       })
       .join("");
+  }
+
+  async function cancelBookingRequest(bookingId) {
+    if (!bookingId) return;
+    if (!isSupabaseConfigured()) {
+      adminToast("Supabase is not configured.", "error");
+      return;
+    }
+    const ok = window.confirm("Cancel this appointment request and release the blocked slot?");
+    if (!ok) return;
+    const { error } = await supabase.from("bookings").update({ status: "cancelled" }).eq("id", bookingId);
+    if (error) {
+      adminToast(`Could not cancel appointment: ${error.message || "unknown error"}`, "error");
+      return;
+    }
+    adminToast("Appointment cancelled. Availability is now live-updated.", "success");
+    await loadBookingsAdmin();
   }
 
   if (savePricingBtn) {
@@ -1078,6 +1115,50 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     });
   }
 
+  if (adminBookingsBody) {
+    adminBookingsBody.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-booking-cancel]");
+      if (!btn) return;
+      const bookingId = btn.getAttribute("data-booking-cancel");
+      if (!bookingId) return;
+      void cancelBookingRequest(bookingId);
+    });
+  }
+
+  if (isSupabaseConfigured()) {
+    try {
+      supabase
+        .channel("admin-live-updates")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "site_settings", filter: "id=eq.default" },
+          () => {
+            render();
+          }
+        )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "bookings" },
+          () => {
+            void loadBookingsAdmin();
+          }
+        )
+        .subscribe();
+    } catch (error) {
+      console.error("[admin] realtime subscription failed", error);
+    }
+  }
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === SITE_SETTINGS_KEY || event.key === BLOCKS_KEY) {
+      render();
+    }
+  });
+
+  window.addEventListener("bbd:site-settings-updated", () => {
+    render();
+  });
+
   ensureDemoSeed();
   renderDemoTables();
 
@@ -1087,7 +1168,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     console.error("[admin] loadBookingsAdmin", e);
     if (adminBookingsBody) {
       adminBookingsBody.innerHTML =
-        '<tr><td colspan="9" class="admin-empty">Could not load bookings.</td></tr>';
+        '<tr><td colspan="10" class="admin-empty">Could not load bookings.</td></tr>';
     }
   });
 })();
