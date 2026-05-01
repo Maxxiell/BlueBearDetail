@@ -166,9 +166,9 @@ import { isSupabaseConfigured } from "./supabase-config.js";
       "Cars, trucks, SUVs, and more — washes, interiors, paint protection, and fleet-friendly scheduling. We bring pro gear and sharp attention to your driveway or office.",
     "index.heroEyebrow": "Denver mobile detailing",
     "index.whatWeOfferTitle": "What We Offer",
-    "index.mapH2": "Serving Denver and surrounding areas",
+    "index.mapH2": "Service Area",
     "index.mapSub":
-      "Approximate 50-mile service radius from Denver — contact us to confirm availability for your location.",
+      "Approximate 50-mile service radius from Denver (Ft Collins included) — contact us to confirm availability for your location.",
     "index.offerHeading": "Mobile Detailing Packages",
     "index.offerCopy":
       "From express washes to full interior and exterior packages, we bring showroom results to your driveway or office.",
@@ -221,7 +221,7 @@ import { isSupabaseConfigured } from "./supabase-config.js";
     signature: [
       "Includes exterior wash | paint prep",
       "Paint enhancement polish to reduce swirls & boost gloss",
-      "Ceramic coating add-on available",
+      "Ceramic Coatings available",
       "Engine bay & trim dressings as needed",
     ],
   };

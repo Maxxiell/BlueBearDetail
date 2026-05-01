@@ -32,4 +32,5 @@
     .bindPopup("Denver — base for mobile detailing");
 
   map.fitBounds(circle.getBounds(), { padding: [24, 24] });
+  map.setZoom(Math.min(map.getZoom() + 0.2, 19));
 })();

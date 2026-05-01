@@ -19,7 +19,7 @@
     signature: [
       "Includes exterior wash | paint prep",
       "Paint enhancement polish to reduce swirls & boost gloss",
-      "Ceramic coating add-on available",
+      "Ceramic Coatings available",
       "Engine bay & trim dressings as needed",
     ],
   };
@@ -243,6 +243,30 @@
         })
       ) {
         lines = lines.concat(["Light scent application"]);
+      }
+      if (key === "signature" && Array.isArray(lines)) {
+        lines = lines
+          .filter(function (line) {
+            var t = String(line || "").trim().toLowerCase();
+            return (
+              t !==
+              "must give 3 day notice to check coating availability with our distributor system x®"
+            );
+          })
+          .map(function (line) {
+            var t = String(line || "").trim();
+            if (t.toLowerCase() === "ceramic coating add-on available") {
+              return "Ceramic Coatings available";
+            }
+            return t;
+          });
+        if (
+          !lines.some(function (line) {
+            return String(line || "").trim().toLowerCase() === "ceramic coatings available";
+          })
+        ) {
+          lines.splice(2, 0, "Ceramic Coatings available");
+        }
       }
       if (!lines || !lines.length) return;
       ul.innerHTML = "";
