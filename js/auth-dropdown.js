@@ -149,12 +149,12 @@ function setupMenu(root) {
     if (!el || el.querySelector(".account-menu__item-icon")) return;
     var labelText = (el.textContent || "").replace(/\s+/g, " ").trim();
     var iconClass = "fa-circle";
-    if (el.classList.contains("account-menu__item--admin")) iconClass = "fa-shield-halved";
+    if (el.classList.contains("account-menu__item--admin")) iconClass = "fa-user-shield";
     else if (el.classList.contains("account-menu__item--login")) iconClass = "fa-right-to-bracket";
     else if (el.classList.contains("account-menu__item--signup")) iconClass = "fa-user-plus";
-    else if (el.classList.contains("account-menu__item--logout")) iconClass = "fa-arrow-right-from-bracket";
+    else if (el.classList.contains("account-menu__item--logout")) iconClass = "fa-right-from-bracket";
     else if (el.classList.contains("account-menu__item--settings")) iconClass = "fa-gear";
-    else if (el.getAttribute("href") === "account.html") iconClass = "fa-gauge-high";
+    else if (el.getAttribute("href") === "account.html") iconClass = "fa-id-badge";
 
     el.textContent = "";
     var icon = document.createElement("i");

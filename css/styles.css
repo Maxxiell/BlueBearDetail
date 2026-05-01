@@ -71,7 +71,7 @@ a:hover {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 50000;
   height: var(--header-h);
   background: var(--white);
   border-bottom: 1px solid var(--brand-faint);
@@ -79,6 +79,7 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .logo {
@@ -151,6 +152,7 @@ a:hover {
   top: var(--header-h);
   left: 0;
   right: 0;
+  z-index: 50001;
   background: var(--white);
   border-bottom: 1px solid var(--brand-faint);
   padding: 0.75rem var(--space) 1rem;
@@ -285,6 +287,7 @@ a:hover {
 }
 
 .account-menu__dropdown {
+  z-index: 50002;
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -321,6 +324,8 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
   box-sizing: border-box;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  border: 1px solid transparent;
 }
 
 /* Critical: ensure JS-hidden dropdown items stay hidden */
@@ -338,8 +343,10 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
-  color: rgba(2, 57, 107, 0.78);
+  font-size: 1rem;
+  color: #000;
+  stroke: currentColor;
+  stroke-width: 2;
 }
 
 .account-menu__item-label {
@@ -350,13 +357,15 @@ a:hover {
 }
 
 .account-menu__item:hover {
-  background: rgba(2, 57, 107, 0.07);
-  color: var(--brand);
+  background: rgba(60, 60, 60, 0.11);
+  color: #111;
   text-decoration: none;
+  border-color: rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
 }
 
 .account-menu__item:hover .account-menu__item-icon {
-  color: var(--brand);
+  color: #000;
 }
 
 .account-menu__item--logout {
@@ -364,7 +373,7 @@ a:hover {
 }
 
 .account-menu__item--logout .account-menu__item-icon {
-  color: rgba(185, 28, 28, 0.85);
+  color: #000;
 }
 
 .account-menu__item--logout:hover {
@@ -1051,12 +1060,25 @@ a:hover {
 
 .services-card--brand .button.button--cta-lg {
   overflow: hidden;
+  clip-path: inset(0 round 10px);
 }
 
 .services-card--brand .button.button--cta-lg svg {
   width: 1.05em;
   height: 1.05em;
   flex-shrink: 0;
+}
+
+.services-card--brand .button.button--cta-lg:before {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.services-card--brand .button.button--cta-lg:after {
+  display: none;
 }
 
 /* Map */
